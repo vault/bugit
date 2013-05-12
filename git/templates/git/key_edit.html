@@ -1,0 +1,6 @@
+<h1>Edit You Public Key</h1>
+<form action="{% url pubkey_edit pk.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+</form>

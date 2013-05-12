@@ -1,0 +1,20 @@
+
+{% if repo %}
+    <h1>{{ repo.name }}</h1>
+    <h2><a href="{% url repo_list owner.username %}">{{ owner.get_full_name }}</a></h2>
+    <p>{{ repo.description }}</p>
+    {% if collaborators %}
+        <ul>
+        {% for c in collaborators %}
+            <li><a href="{% url repo_list c.username %}">{{ c.username }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% ifequal user owner %}
+    <p><a href="{% url repo_edit user.username repo.name %}">Edit</a>
+    <form method="post" action="{% url repo_delete user.username repo.name %}">{% csrf_token %}<input type="submit" value="Delete" /></form></p>
+    {% endifequal %}
+{% else %}
+    <p>There was a problem</p>
+{% endif %}
+

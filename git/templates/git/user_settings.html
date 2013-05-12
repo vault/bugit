@@ -1,0 +1,29 @@
+<h1>User Settings</h1>
+<form action="{% url user_settings %}" method="post">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    <input type="submit" value="Update" />
+</form>
+
+<h2>Public Keys</h2>
+{% if keys %}
+<ul>
+    {% for key in keys %}
+    <li>{{ key.description }}<br/>
+        <pre>{{ key.pubkey }}</pre><br/>
+    <form method="post" action="{% url pubkey_delete key.id %}">{% csrf_token %}<input type="submit"
+        value="Delete" /></form>
+    <a href="{% url pubkey_edit key.id %}">Edit</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h2>New Public Key</h2>
+<form action={% url pubkey_add %} method="post">
+    {% csrf_token %}
+    {{ pk_form.as_p }}
+    <input type="submit" value="New Public Key" />
+</form>
+
+
