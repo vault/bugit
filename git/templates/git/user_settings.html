@@ -1,29 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}User settings {% endblock %}
+
+
+{% block content %}
 <h1>User Settings</h1>
-<form action="{% url user_settings %}" method="post">
+<form class="form-inline" action="{% url user_settings %}" method="post">
     {% csrf_token %}
     {{ user_form.as_p }}
-    <input type="submit" value="Update" />
+    <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
 
 <h2>Public Keys</h2>
 {% if keys %}
-<ul>
     {% for key in keys %}
-    <li>{{ key.description }}<br/>
-        <pre>{{ key.pubkey }}</pre><br/>
-    <form method="post" action="{% url pubkey_delete key.id %}">{% csrf_token %}<input type="submit"
-        value="Delete" /></form>
-    <a href="{% url pubkey_edit key.id %}">Edit</a>
-    </li>
+    <div>
+        <h3>{{ key.description }}</h3>
+        <pre>{{ key.pubkey }}</pre>
+        <div class="row pull-right">
+            <form class="span" method="get" action="{% url pubkey_edit key.id %}">{% csrf_token %}<button class="btn" type="submit" ><i class="icon-edit"></i> Edit</button></form>
+            <form class="span" method="post" action="{% url pubkey_delete key.id %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>
+        </div>
+    </div>
     {% endfor %}
-</ul>
 {% endif %}
 
+<br/>
 <h2>New Public Key</h2>
 <form action={% url pubkey_add %} method="post">
     {% csrf_token %}
     {{ pk_form.as_p }}
-    <input type="submit" value="New Public Key" />
+    <button class="btn btn-primary" type="submit"><i class="icon-plus icon-white"></i> New Public Key</button>
 </form>
 
-
+{% endblock %}

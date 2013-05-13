@@ -9,6 +9,7 @@ def dispatch_repo_work(sender, **kwargs):
 
     user = obj.owner.username
     r = redis_db()
+
     if not r.sismember(CommandQueue.users, user):
         r.sadd(CommandQueue.users, user)
         r.rpush(CommandQueue.queue, user)

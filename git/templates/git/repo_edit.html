@@ -1,8 +1,13 @@
+{% extends "base.html" %}
 
+{% block title %}Editing {{ repo.name }}{% endblock %}
+
+{% block content %}
 <h1>Edit Repo</h1>
 <h2>{{ repo.name }}</h2>
 <form action="{% url repo_edit owner.username repo.name %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit", value="Update" />
+    <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
+{% endblock %}

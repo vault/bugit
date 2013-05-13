@@ -26,7 +26,8 @@ class PublicKey(models.Model):
 class Repository(models.Model):
     owner = models.ForeignKey(User, related_name='owner_set')
     name = models.SlugField(max_length=100, editable=False)
-    description = models.TextField(blank=True)
+    description = models.CharField(max_length=100, blank=True)
+    long_description = models.TextField(blank=True)
     is_public = models.BooleanField()
     is_created = models.BooleanField()
     collaborators = models.ManyToManyField(User, related_name='collaborator_set', blank=True)

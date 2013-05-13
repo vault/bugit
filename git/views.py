@@ -84,7 +84,7 @@ def pubkey_edit(request, key_id):
         return redirect('user_settings')
     elif pk.owner == user and request.method == 'GET':
         form = PublicKeyForm(model_to_dict(pk))
-        context = { 'form' : form, 'pk' : pk }
+        context = { 'form' : form, 'pk' : pk , 'user': user}
         return render_to_response('git/key_edit.html', context, context_instance=RequestContext(request))
     else:
         return HttpResponse("What is this case even?")

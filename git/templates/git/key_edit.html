@@ -1,6 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Public Key{% endblock %}
+
+{% block content %}
+
 <h1>Edit You Public Key</h1>
 <form action="{% url pubkey_edit pk.id %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Update" />
+    <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
+
+{% endblock %}

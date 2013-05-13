@@ -12,7 +12,7 @@ class PublicKeyForm(ModelForm):
 class RepositoryForm(ModelForm):
     class Meta:
         model = Repository
-        fields = ['description', 'is_public', 'collaborators']
+        fields = ['description', 'long_description', 'is_public', 'collaborators']
 
 
 class UserForm(ModelForm):

@@ -1,19 +1,32 @@
+{% extends "base.html" %}
 
-{% if repos %}
+{% block title %} {% endblock %}
+
+
+{% block content %}
+
 {% ifequal owner user %} 
 <h2>Your repositories</h2>
 {% endifequal %}
 
 {% ifnotequal owner user %} 
-<h2>{{ owner.username }}&apos;s Repositories</h2>
+<h2>{{ owner.get_full_name }}&apos;s Repositories</h2>
 {% endifnotequal %}
+
+{% if repos %}
 <ul>
     {% for repo in repos %}
-    <li><a href="{% url repo_view owner.username repo.name %}">{{ owner.username }}/{{ repo.name }}</a></li>
+    <li>
+    <a href="{% url repo_view owner.username repo.name %}">{{ repo.name }}</a> &mdash; {{ repo.description }}</li>
     {% endfor %}
 </ul>
 {% else %}
-<p>You have no git repositories! You should create one</p>
+{% ifequal owner user %}
+    <p>You have no git repositories! You should create one</p>
+{% endifequal %}
+{% ifnotequal owner user %}
+    <p>{{ user.get_full_name }} has no git repositores!</p>
+{% endifnotequal %}
 {% endif %}
 
 {% if colab %}
@@ -26,20 +39,11 @@
 {% endifnotequal %}
 <ul>
     {% for repo in colab %}
-    <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a></li>
+    <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
+    &mdash; {{ repo.description }}</li>
+    </li>
     {% endfor %}
 </ul>
 {% endif %}
 
-{% ifequal owner user %}
-<h2>New Repo?</h2>
-<form action="{% url repo_add user.username %}" method="post">
-    {% csrf_token %}
-    <label for="repo_name">Repo name:</label>
-    <input name="repo_name" />
-    <input type="submit" value="Create" />
-</form>
-{% endifequal %}
-
-<a href="{% url user_settings %}">Edit Settings</a>
-
+{% endblock %}
