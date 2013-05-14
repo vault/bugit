@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Editing {{ repo.name }}{% endblock %}
+{% block title %}Editing a Repo{% endblock %}
 
 {% block content %}
 <h1>Edit Repo</h1>
 <h2>{{ repo.name }}</h2>
-<form action="{% url repo_edit owner.username repo.name %}" method="post">
+{% if repo %}
+    <form action="{% url repo_edit owner.username repo.name %}" method="post">
+{% else %}
+    <form action="{% url repo_add owner.username %}" method="post">
+{% endif %}
     {% csrf_token %}
+    {% if repo.new_form %}
+    {{ new_form.as_p }}
+    {% endif %}
     {{ form.as_p }}
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
