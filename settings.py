@@ -60,7 +60,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/media/bugit/static_built'
+STATIC_ROOT = '/home/mgabed/bugit/static_built'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -102,13 +102,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'django.contrib.auth.middleware.RemoteUserMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-#AUTHENTICATION_BACKENDS = (
-#    'django.contrib.auth.backends.RemoteUserBackend',
-#)
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.RemoteUserBackend',
+)
 
 ROOT_URLCONF = 'bugit.urls'
 
