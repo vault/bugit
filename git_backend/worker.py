@@ -7,10 +7,9 @@ sys.path.append("/home/mgabed/bugit")
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
 
 from gitolite import GitoliteUserConf, RepositoryConf
-from git.models import User, PublicKey, Repository
+from common.models import User, PublicKey, Repository
 
-from git import redis_db
-from git import CommandQueue
+from common.redis_client import redis_db, CommandQueue
 
 from subprocess import call
 
