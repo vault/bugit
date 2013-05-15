@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'common',
     'repo_manage',
     'user_manage',
+    'viewer',
     'south',
 )
 

@@ -29,23 +29,6 @@ def repo_view(request, user_name, repo_name):
     return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
-def repo_browse(request, user_name, repo_name, path=None):
-    user = request.user
-    owner = get_object_or_404(User, username=user_name)
-    repo = get_object_or_404(Repository, owner=owner, name=repo_name)
-    collaborators = repo.collaborators.all()
-    #if user != owner or not repo.is_public or not user in collaborators:
-        #return HttpResponse('Not autorized', status=401)
-
-    if path is not None:
-        text = get('http://localhost/cgit/%s/%s/%s' %(user_name, repo_name, path))
-    else:
-        text = get('http://localhost/cgit/%s/%s' %(user_name, repo_name))
-
-    context = get_context(request, {'repo':repo, 'repo_html':text.text})
-    return render_to_response('repo_manage/repo_view.html', context)
-
-
 def repo_list(request, user_name):
     user = request.user
     owner = get_object_or_404(User, username=user_name)
