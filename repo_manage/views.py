@@ -26,7 +26,7 @@ def repo_view(request, user_name, repo_name):
 
     context = get_context(request,
             { 'repo' : repo, 'owner' : owner, 'collaborators': collaborators })
-    return render_to_response('git/repo.html', context, context_instance=RequestContext(request))
+    return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
 def repo_browse(request, user_name, repo_name, path=None):
@@ -43,7 +43,7 @@ def repo_browse(request, user_name, repo_name, path=None):
         text = get('http://localhost/cgit/%s/%s' %(user_name, repo_name))
 
     context = get_context(request, {'repo':repo, 'repo_html':text.text})
-    return render_to_response('git/repo_view.html', context)
+    return render_to_response('repo_manage/repo_view.html', context)
 
 
 def repo_list(request, user_name):
@@ -60,7 +60,7 @@ def repo_list(request, user_name):
         colab = mine | theirs
     context = get_context(request,
             { 'repos' : repos, 'owner' : owner, 'colab' : colab})
-    return render_to_response('git/repo_list.html', context, context_instance=RequestContext(request))
+    return render_to_response('repo_manage/repo_list.html', context, context_instance=RequestContext(request))
 
 
 def repo_add(request, user_name):
@@ -80,7 +80,7 @@ def repo_add(request, user_name):
         return HttpResponse("You can't do that", status=405)
 
     context = get_context(request, {'new_form': form, 'form': RepositoryForm(), 'owner':owner})
-    return render_to_response("git/repo_edit.html", context, context_instance=RequestContext(request))
+    return render_to_response("repo_manage/repo_edit.html", context, context_instance=RequestContext(request))
 
 
 def repo_new(request, user_name):
@@ -101,9 +101,9 @@ def repo_new(request, user_name):
             repo.owner = owner
             repo.name = new_form.cleaned_data['repo_name']
             repo.save()
-            return redirect('git/repo.html', owner.user_name, repo.name)
+            return redirect('repo_view' , owner.user_name, repo.name)
     context = get_context(request, {'new_form':new_form, 'form':form})
-    return render_to_response('git/repo.html', context, context_instance=RequestContext(request))
+    return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
 def repo_edit(request, user_name, repo_name):
@@ -123,7 +123,7 @@ def repo_edit(request, user_name, repo_name):
             return redirect('repo_view', user.username, repo.name)
 
     context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, })
-    return render_to_response('git/repo_edit.html', context, context_instance=RequestContext(request))
+    return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))
 
 
 def repo_delete(request, user_name, repo_name):

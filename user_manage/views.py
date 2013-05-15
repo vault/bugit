@@ -9,7 +9,6 @@ from common.util import *
 from user_manage.forms import UserForm, PublicKeyForm
 
 
-
 def user_settings(request):
     user = request.user
     new_pk = PublicKeyForm()
@@ -26,7 +25,7 @@ def user_settings(request):
             user = user_form.save()
             return redirect('repo_list', user.username)
     context = get_context(request, { 'user_form' : user_form, 'pk_form': new_pk, 'keys' : pubkeys })
-    return render_to_response('git/user_settings.html', context, context_instance=RequestContext(request))
+    return render_to_response('user_settings/user_settings.html', context, context_instance=RequestContext(request))
 
 
 def pubkey_add(request):
@@ -47,7 +46,7 @@ def pubkey_add(request):
         pubkeys = user.publickey_set.all()
         user_form = UserForm(model_to_dict(user))
         context = get_context(request, {'form' : form})
-        return render_to_response('git/key_edit.html', context, context_instance=RequestContext(request))
+        return render_to_response('user_settings/key_edit.html', context, context_instance=RequestContext(request))
 
 
 def pubkey_delete(request, key_id):
@@ -77,4 +76,5 @@ def pubkey_edit(request, key_id=None):
         return HttpResponse("Not implemented", status=405)
 
     context = get_context(request, {'form' : form, 'pk' : pk})
-    return render_to_response('git/key_edit.html', context, context_instance= RequestContext(request))
+    return render_to_response('user_settings/key_edit.html', context, context_instance= RequestContext(request))
+
