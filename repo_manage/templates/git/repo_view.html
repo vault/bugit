@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Browsing {{ repo.name }}{% endblock %}
+
+{% block content %}
+{% autoescape off %}
+    {{ repo_html }}
+{% endautoescape %}
+
+{% endblock %}

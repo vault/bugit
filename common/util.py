@@ -1,6 +1,6 @@
 
-from git.models import *
-from git.forms import *
+from models import *
+from repo_manage.forms import NewRepositoryForm
 
 def get_context(request, ctx):
     context = {}

@@ -2,13 +2,7 @@
 from django import forms
 from django.forms import ModelForm, Form
 
-from git.models import *
-
-
-class PublicKeyForm(ModelForm):
-    class Meta:
-        model = PublicKey
-        fields = ['description', 'pubkey']
+from git.models import Repository
 
 
 class NewRepositoryForm(Form):
@@ -20,9 +14,4 @@ class RepositoryForm(ModelForm):
         model = Repository
         fields = ['description', 'long_description', 'is_public', 'collaborators']
 
-
-class UserForm(ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name']
 

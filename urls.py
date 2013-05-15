@@ -6,7 +6,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^manage/', include('git.urls')),
+    url(r'^repo/', include('repo_manage.urls')),
+    url(r'^settings/', include('user_manage.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 
