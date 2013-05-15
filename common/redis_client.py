@@ -1,7 +1,7 @@
 
 import redis
 
-redis_pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+#redis_pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
 class CommandQueue:
     queue = 'bugit_processing_queue'
@@ -9,4 +9,5 @@ class CommandQueue:
     processing = 'bugit_in_progress'
 
 def redis_db():
-    return redis.StrictRedis(connection_pool = redis_pool)
+    return redis.Redis(host='localhost', port=6379, db=0)
+
