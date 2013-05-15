@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.contrib import admin
 
-from git.signals import dispatch_repo_work
+from common.signals import dispatch_repo_work
 
 
 class PublicKey(models.Model):
