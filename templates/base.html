@@ -23,6 +23,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     <div class="nav-collapse collapse">
+                        {% if user.is_authenticated %}
                         <ul class="nav">
                             <li><a href="{% url repo_list user.username %}">My Repositories</a></li>
                             <li><a href="{% url user_settings %}">Settings</a></li>
@@ -33,6 +34,7 @@
                             <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white"></i> Create</button>
                         </form>
                         </ul>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -21,11 +21,14 @@ def repo_view(request, user_name, repo_name):
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
     collaborators = repo.collaborators.all()
 
-    #if not repo.is_public or user != owner or not user in collaborators:
-        #return HttpResponse('Not authorized', status=401)
+    can_see = repo.is_public or user == owner
+    can_edit = user in collaborators
+    can_view = can_see or can_edit
+    if not can_view:
+        return HttpResponse('Not authorized', status=401)
 
     context = get_context(request,
-            { 'repo' : repo, 'owner' : owner, 'collaborators': collaborators })
+            { 'repo' : repo, 'owner' : owner,'can_view':can_view, 'collaborators': collaborators })
     return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
@@ -112,9 +115,16 @@ def repo_edit(request, user_name, repo_name):
 def repo_delete(request, user_name, repo_name):
     user = request.user
     owner = get_object_or_404(User, username=user_name)
-    if user == owner and request.method == 'POST':
+
+    if user != owner:
+        return HttpResponse("You can't delete this", status=401)
+
+    if request.method == 'POST':
         repo = get_object_or_404(Repository, owner=owner, name=repo_name)
         repo.delete()
         return redirect('repo_list', user.username)
+    else:
+        return HttpResponse("You can't do that", status=405)
+
 
 
