@@ -4,6 +4,10 @@ from django.shortcuts import *
 from django.forms.models import model_to_dict
 
 from common.models import PublicKey 
+from common.util import *
+
+from user_manage.forms import UserForm, PublicKeyForm
+
 
 
 def user_settings(request):

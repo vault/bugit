@@ -1,5 +1,5 @@
 
-from common.redis import redis_db, CommandQueue
+from common.redis_client import redis_db, CommandQueue
 
 
 def dispatch_repo_work(sender, **kwargs):

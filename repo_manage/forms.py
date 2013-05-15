@@ -2,7 +2,7 @@
 from django import forms
 from django.forms import ModelForm, Form
 
-from git.models import Repository
+from common.models import Repository
 
 
 class NewRepositoryForm(Form):

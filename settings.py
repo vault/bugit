@@ -102,13 +102,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
+    #'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.RemoteUserBackend',
-)
+#AUTHENTICATION_BACKENDS = (
+    #'django.contrib.auth.backends.RemoteUserBackend',
+#)
 
 ROOT_URLCONF = 'bugit.urls'
 
@@ -132,7 +132,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 
     'common',
-    'git',
+    'repo_manage',
+    'user_manage',
     'south',
 )
 
