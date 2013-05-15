@@ -4,3 +4,4 @@
 .*.swo
 *.*~
 static_built
+settings.py
