@@ -1,8 +1,9 @@
 
 import os, sys
 
-up1 = os.path.join(os.getcwd(), '..')
-up2 = os.path.join(os.getcwd(), '..', '..')
+this = os.path.dirname(os.path.abaspath(__file__))
+up1 = os.path.join(this, '..')
+up2 = os.path.join(this, '..', '..')
 
 paths = [up1, up2]
 
