@@ -14,7 +14,8 @@ from repo_manage.forms import RepositoryForm, NewRepositoryForm
 from common.util import get_context
 
 def index(request):
-    return HttpResponse("Index")
+    user = request.user
+    return redirect("repo_list", user.username)
 
 
 def repo_view(request, user_name, repo_name):
