@@ -3,8 +3,13 @@
 {% block title %}Editing a Repo{% endblock %}
 
 {% block content %}
-<h1>Edit Repo</h1>
-<h2>{{ repo.name }}</h2>
+
+{% if new_form %}
+<h1>New Repo</h1>
+{% else %}
+<h1>Edit Repo &mdash; {{ repo.name }}</h1>
+{% endif %}
+
 {% if new_form %}
     <form action="{% url repo_new %}" method="post">
 {% else %}
@@ -47,5 +52,8 @@
 
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
+
+{% if not new_form %}
 <form class="form-inline" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-link" type="submit">Delete</button></form>
+{% endif %}
 {% endblock %}

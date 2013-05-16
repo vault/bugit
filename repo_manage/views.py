@@ -56,8 +56,10 @@ def repo_simple_new(request):
 
     if not user.is_authenticated():
         return HttpResponse("You can't add this", status=401)
-
-    if request.method == 'POST':
+    
+    if request.method == 'GET':
+        return redirect('repo_new')
+    elif request.method == 'POST':
         new_form = NewRepositoryForm(request.POST)
         if new_form.is_valid():
             repo = Repository(owner=user)
