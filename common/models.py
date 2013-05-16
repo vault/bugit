@@ -39,7 +39,7 @@ class Repository(models.Model):
         return "%s/%s" %(self.owner.username, self.name)
 
     def get_clone_url(self):
-        return "git@eng-git@bu.edu:%s/%s" % (self.owner.username, self.name)
+        return "git@eng-git.bu.edu:%s/%s" % (self.owner.username, self.name)
 
     def get_public_clone_url(self):
         return "git://eng-git.bu.edu/%s/%s" % (self.owner.username, self.name)

@@ -11,7 +11,22 @@
     <form action="{% url pubkey_add %}" method="post">
 {% endif %}
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    {% for field in form.visible_fields %}
+        {% if field.errors %}
+        <div class="control-group error">
+        {% else %}
+        <div class="control-group">
+        {% endif %}
+        <label class="control-lable" for="{{ field.html_name}}">{{ field.label }}</label>
+        <div class="controls">
+            {{ field }}
+            {% if field.errors %}
+            <span class="help-inline">{{ field.errors }}</span>
+            {% endif %}
+        </div>
+        </div>
+    {% endfor %}
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
 
