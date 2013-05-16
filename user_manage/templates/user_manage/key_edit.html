@@ -29,5 +29,6 @@
     {% endfor %}
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
+<form method="post" action="{% url pubkey_delete pk.id %}">{% csrf_token %}<button class="btn btn-link" type="submit">Delete</button></form>
 
 {% endblock %}

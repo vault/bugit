@@ -16,9 +16,8 @@
     <div>
         <h3>{{ key.description }}</h3>
         <pre>{{ key.pubkey }}</pre>
-        <div class="row pull-right">
-            <form class="span" method="get" action="{% url pubkey_edit key.id %}">{% csrf_token %}<button class="btn" type="submit" ><i class="icon-edit"></i> Edit</button></form>
-            <form class="span" method="post" action="{% url pubkey_delete key.id %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>
+        <div class="pull-right">
+            <a class="span" href="{% url pubkey_edit key.id %}">{% csrf_token %}<button class="btn" type="submit" ><i class="icon-edit"></i> Edit</button></a>
         </div>
     </div>
     {% endfor %}
