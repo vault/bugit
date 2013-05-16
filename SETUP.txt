@@ -1,0 +1,292 @@
+
+Install Packages
+=================
+
+Servers
+-------
+httpd
+mysql-server
+redis
+
+Other
+-----
+gitolite3
+cgit
+mod_wsgi
+
+Python Stuff
+------------
+Django
+Django-south
+MySQL-python
+python-requests
+python-markdown
+python-redis
+
+
+Misc
+=====
+
+You may have to disable SELinux for ssh keys to work right. You do this in
+/etc/sysconfig/selinux. You can also go ahead and chkconfig redis on, as
+we'll need it running, and we don't need to adjust it's config at all.
+
+
+Configure gitolite
+==================
+
+We don't like gitolite3 as the username. Add a 'git' user
+
+# adduser -d /srv/git -u <uid> -g <gid> git
+
+
+Next we need to set up gitolite. Have the public key of the user you want
+to be able to administer gitolite on hand, and save it under /tmp
+
+for instance:
+
+$ cd
+$ cp .ssh/id_rsa.pub /tmp/mgabed.pub
+
+Now we can set up gitolite under the git account
+
+# su - git
+# cd
+# gitolite setup -pk /tmp/mgabed.pub
+
+Now change in .gitolite.rc (in git's home) UMASK to be 0027. This will let
+group members read files, which will let cgit do its thing later. Also
+change GIT_CONFIG_KEYS to 'gitweb\.(owner|description|category)'. This will
+allow nice descriptions on cgit. You should also be able to search the file
+for 'cgit'.  This should find a single line for you to uncomment.
+
+Now the user whose public key you used can run
+
+$ git clone git@<host>:gitolite-admin
+
+and get a copy of the config repo
+
+They should be able to make any changes they want and push them back. Go
+ahead and delete the test repo from conf/gitolite.conf in the repo you
+cloned.
+
+
+Commit your changes and push them back. If you get prompted for git's
+password, something is wrong with your public key setup. You may want to
+look at permissions, SELinux, the firewall, or hosts.allow.
+
+
+Mysql
+======
+
+First start the mysql server
+
+# service mysqld start
+
+You should see a bunch of information about it setting stuff up, and it
+will tell you to secure your installation. Do this by running
+
+# mysql_secure_installation
+
+This will walk you through setting up and securing the database. Make sure
+you set a good password for the root user and write it down somewhere.
+
+
+Now we'll setup mysql for running our git application
+
+mysql> CREATE DATABASE bugit;
+mysql> CREATE USER 'bugit'@'localhost' IDENTIFIED BY '<A GOOD PASSWORD>';
+mysql> GRANT ALL PRIVILEGES ON bugit.* TO 'bugit'@'localhost';
+mysql> FLUSH PRIVILEGES;
+
+Make a note of what password you setup.
+
+The user you set up and the password will be used in django.
+
+
+BU Git Django Application
+==========================
+
+Before we can run the App, there are a couple of things to do.
+
+First we need a user for the app's config builder to run as.
+
+# groupadd -g <gid> bugit_worker
+# adduser -d /srv/git -u <uid> -g <gid> bugit_worker
+# su - bugit_worker
+# ssh-keygen
+
+This will create a new user, and create an ssh key for it. It should be
+okay to leave the ssh key passwordless, as it's only going to be used for
+pushing to the local gitolite-admin repo. (Which somebody who is able to
+break into the user account will be able to do anyway).
+
+Now copy this public key and give it RW permissions to gitolite-admin. The
+repo in gitolite.conf should look something like this (RW+ name will be
+different). We'll also go ahead and configure the includes we need for the
+backend to work.
+
+
+include "groups/*.conf"
+include "users/*.conf"
+
+repo gitolite-admin
+    RW+     =   mgabed
+    RW      =   bugit_worker
+
+
+Commit and push this back, and clone it as the bugit_worker user.
+
+Make a copy of the 'bugit' folder under bugit_worker's home directory. As
+the bugit_worker user copy bugit/settings.py.sample to as 'settings.py' to
+bugit_worker's home folder. Symlink this config file into the bugit folder.
+
+Now edit settings.py. Fill in you databse credentials, and add your hostname
+to the list of allowed hosts. From there edit any of the template and static
+paths if they are incorrect.
+
+Now you can (as bugit_worker) run
+
+$ ./manage.py syncdb
+$ ./manage.py collectstatic
+
+This should complete successfully. You should also be able to do runserver,
+but we won't be using that.
+
+The Django application is now set up entirely
+
+
+Git Config Worker Backend
+==========================
+
+In the config_worker folder, you should have the worker.py script running.
+This will listen for changes and commit them to the gitolite config when
+they happen.
+
+
+Cgit
+=====
+
+Here's the config file for cgit. It should go in /etc/cgitrc.
+
+#--START---------------
+cache-size=0
+
+embedded=1
+noheader=1
+
+remove-suffix=1
+
+# Specify some default clone prefixes
+#clone-prefix=git://example.com ssh://example.com/pub/git http://example.com/git
+
+# Specify the css url
+css=/cgit-data/cgit.css
+
+# Show extra links for each repository on the index page
+enable-index-links=1
+enable-commit-graph=1
+enable-log-filecount=1
+enable-log-linecount=1
+enable-git-config=1
+
+max-stats=quarter
+
+root-title=BU Git Repos
+root-desc=Git Hosting for BU People
+
+snapshots=tar.gz tar.bz2 zip
+
+##
+## List of common mimetypes
+mimetype.gif=image/gif
+mimetype.html=text/html
+mimetype.jpg=image/jpeg
+mimetype.jpeg=image/jpeg
+mimetype.pdf=application/pdf
+mimetype.png=image/png
+mimetype.svg=image/svg+xml
+
+# Enable syntax highlighting (requires the highlight package)
+source-filter=/usr/libexec/cgit/filters/syntax-highlighting.sh
+
+project-list=/srv/git/projects.list
+scan-path=/srv/git/repositories
+#--END--------------------
+
+
+Apache
+======
+
+You should be able to /etc/httpd/conf/httpd.conf and comment out anything
+that would be "default" behavior. This means all the default cgi-bin stuff,
+and all the default directory stuff. Leave any module loads and IfModule
+stuff alone.
+
+Find the line that says Listen 80, and add a line "Listen 8080" underneath.
+Cgit will only be visible from localhost and will run on this port.
+
+Now edit /etc/httpd/conf.d/cgit.conf to contain
+
+<VirtualHost localhost:8080>
+        ServerName eng-git.bu.edu:8080
+        ScriptAlias /view /var/www/cgi-bin/cgit
+</VirtualHost>
+
+Setting your hostname to whatever you're using.
+
+Next we'll set up the actual applications. Edit servers.d/bugit.conf and
+fill it with
+
+<VirtualHost *:80>
+        ServerName eng-git.bu.edu:80
+
+        DocumentRoot /srv/bugit/bugit
+
+        <Location />
+        </Location>
+
+        Alias /static/ /srv/bugit/bugit/static_built/
+
+        <Directory /srv/bugit/bugit/static_built>
+                Order deny,allow
+                Allow from all
+        </Directory>
+
+        WSGIPassAuthorization On
+        WSGIScriptAlias / /srv/bugit/bugit/django.wsgi
+</VirtualHost>
+
+Back in httpd.conf, we need to include these files. At the very end of the file add
+
+Include servers.d/*.conf
+
+
+Authentication
+===============
+
+There is no code to do normal logins, so instead we're going to rely on an
+outside authentication service. This being a thing for BU, weblogin is the
+easiest to use.
+
+Install the weblogin rpms, and enable the mod_unique_id. There should be
+a line that you can uncomment that enables it.
+
+Edit servers.d/bugit.conf and in the empty locaiton Location block add
+
+AuthType weblogin
+<Limit GET POST>
+    require valid-user
+</Limit>
+
+If you want, you can enable more exotic requirements for the user, but this
+should suffice for now.
+
+All that's left is to tell django that it should use the remote user
+information for authentication. To do this open up settings.py in the app,
+and uncomment the AUTHENTICATION_BACKENDS section, and uncomment the
+RemoteUserMiddleware line in MIDDLEWARE_CLASSES.
+
+Now Django will create the user in the databse after a new person logs in
+via weblogin.
+
