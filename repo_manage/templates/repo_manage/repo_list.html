@@ -45,7 +45,9 @@
     {% endfor %}
 </ul>
 {% else %}
+{% ifnotequal owner user %}
 <p>You've never collaborated with {{ owner.get_full_name }}</p>
+{% endifnotequal %}
 {% endif %}
 
 {% endblock %}
