@@ -27,10 +27,10 @@
     {% endif %}
     <div class="row">
     {% if can_see %}
-        <form class="span" method="get" action="{% url repo_browse owner.username repo.name %}"><button class="btn btn-primary" type="submit"><i class="icon-eye-open icon-white"></i> View</button></form>
+        <a class="span" href="{% url repo_browse owner.username repo.name %}"><button class="btn btn-primary" type="submit"><i class="icon-eye-open icon-white"></i> View</button></a>
     {% endif %}
     {% ifequal user owner %}
-        <form class="span" method="get" action="{% url repo_edit owner.username repo.name %}"><button class="btn" type="submit"><i class="icon-edit"></i> Edit</button></form>
+        <a class="span" href="{% url repo_edit owner.username repo.name %}"><button class="btn" type="submit"><i class="icon-edit"></i> Edit</button></a>
         <!--<form class="span" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>-->
     {% endifequal %}
     </div>
