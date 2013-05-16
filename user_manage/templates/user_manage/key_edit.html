@@ -4,7 +4,11 @@
 
 {% block content %}
 
+{% if pk %}
 <h1>Edit You Public Key</h1>
+{% else %}
+<h1>Add New Public Key</h1>
+{% endif %}
 {% if pk %}
     <form action="{% url pubkey_edit pk.id %}" method="post">
 {% else %}
@@ -29,6 +33,8 @@
     {% endfor %}
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
+{% if pk %}
 <form method="post" action="{% url pubkey_delete pk.id %}">{% csrf_token %}<button class="btn btn-link" type="submit">Delete</button></form>
+{% endif %}
 
 {% endblock %}

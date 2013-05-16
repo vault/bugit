@@ -32,21 +32,22 @@ def user_settings(request):
 
 def pubkey_add(request):
     user = request.user
-    if request.method == 'GET':
-        return HttpResponse("not implemented", status=405)
 
     if not user.is_authenticated():
         return HttpResponse("You should be authenticated....", status=401)
 
-    form = PublicKeyForm(request.POST)
-    if form.is_valid():
-        key = form.save(commit=False)
-        key.owner = user
-        try:
-            key.save()
-            return redirect('user_settings')
-        except IntegrityError:
-            form._errors["description"] = ErrorList(["You have a public key with that name already"])
+    if request.method == 'GET':
+        form = PublicKeyForm()
+    elif request.method == 'POST':
+        form = PublicKeyForm(request.POST)
+        if form.is_valid():
+            key = form.save(commit=False)
+            key.owner = user
+            try:
+                key.save()
+                return redirect('user_settings')
+            except IntegrityError:
+                form._errors["description"] = ErrorList(["You have a public key with that name already"])
     context = get_context(request, {'form' : form})
     return render_to_response('user_manage/key_edit.html', context, context_instance=RequestContext(request))
 
