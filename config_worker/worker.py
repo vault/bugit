@@ -1,8 +1,8 @@
 
 import os, sys
 
-sys.path.append("/home/mgabed")
-sys.path.append("/home/mgabed/bugit")
+sys.path.append("/srv/bugit")
+sys.path.append("/srv/bugit/bugit")
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
 
@@ -63,11 +63,15 @@ def process_user(r, user_name):
 
 if __name__ == '__main__':
 
+
     print "Getting redis..."
     r = redis_db()
 
     print "CD-ing..."
-    os.chdir("/home/mgabed/gitolite-admin")
+    os.chdir("/srv/bugit/gitolite-admin")
+
+    print "Updating local config..."
+    call(["git", "pull"])
 
     print "Processing remnants..."
     for item in r.smembers(CommandQueue.processing):
@@ -76,6 +80,7 @@ if __name__ == '__main__':
     print "Entering main-loop"
     while True:
         user_name = next_user(r)
+        call(["git", "pull"])
         process_user(r, user_name)
         call(["git", "push"])
         

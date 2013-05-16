@@ -47,7 +47,7 @@ class RepositoryConf(object):
         if self.public:
             lines.append("\tR = @all")
             lines.append("\tR = daemon")
-        lines.append("\tR = gitweb")
+        #lines.append("\tR = gitweb")
         lines.append("\n")
         return '\n'.join(lines)
 

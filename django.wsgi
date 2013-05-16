@@ -1,6 +1,6 @@
 
 import os, sys
-paths = ['/home/mgabed/bugit', '/home/mgabed']
+paths = ['/srv/bugit/bugit', '/srv/bugit']
 for path in paths:
     if path not in sys.path:
         sys.path.append(path)
