@@ -6,7 +6,7 @@
 <h1>Edit Repo</h1>
 <h2>{{ repo.name }}</h2>
 {% if new_form %}
-    <form action="{% url repo_add owner.username %}" method="post">
+    <form action="{% url repo_new owner.username %}" method="post">
 {% else %}
     <form action="{% url repo_edit owner.username repo.name %}" method="post">
 {% endif %}
