@@ -6,9 +6,16 @@
 
 {% block content %}
 {% if repo %}
-    <h1>{{ repo.name }}</h1>
-    <h2>by <a href="{% url repo_list owner.username %}">{{ owner.get_full_name }}</a></h2>
-    <h3>{{ repo.description }}</h3>
+    <h1>{{ repo.name }} &mdash; {{ repo.description }}</h1>
+    <h3>by <a href="{% url repo_list owner.username %}">{{ owner.get_full_name }}</a></h3>
+    {% if can_see or can_edit %}
+    <h3>Clone this repository</h3>
+    {% if can_edit %}
+    <pre>git clone {{ repo.get_clone_url }}</pre>
+    {% else %}
+    <pre>git clone {{ repo.get_public_clone_url }}</pre>
+    {% endif %}
+    {% endif %}
     <p>{{ repo.long_description|markdown:"safe" }}</p>
     {% if collaborators %}
     <h2>Collaborators</h2>
@@ -19,16 +26,16 @@
         </ul>
     {% endif %}
     <div class="row">
-    {% if can_view %}
+    {% if can_see %}
         <form class="span" method="get" action="{% url repo_browse owner.username repo.name %}"><button class="btn btn-primary" type="submit"><i class="icon-eye-open icon-white"></i> View</button></form>
     {% endif %}
     {% ifequal user owner %}
         <form class="span" method="get" action="{% url repo_edit owner.username repo.name %}"><button class="btn" type="submit"><i class="icon-edit"></i> Edit</button></form>
-        <form class="span" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>
+        <!--<form class="span" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>-->
     {% endifequal %}
     </div>
 {% else %}
-    <p>There was a problem</p>
+    <p>This doesn't seem to exist, or something else went wrong</p>
 {% endif %}
 
 {% endblock %}
