@@ -10,7 +10,6 @@ from common.models import Repository
 from common.util import get_context
 
 
-
 def cgit_url(user_name, repo_name, path, query=None):
     if path is not None:
         base = 'http://localhost:8080/view/%s/%s/%s' %(user_name, repo_name, path)
@@ -50,26 +49,25 @@ def repo_plain(request, user_name, repo_name, path):
 
 
 def repo_snapshot(request, user_name, repo_name, path):
-    return HttpResponse("Not implemented yet")
-    #user = request.user
-    #owner = get_object_or_404(User, username=user_name)
-    #repo = get_object_or_404(Repository, owner=owner, name=repo_name)
-    #collaborators = repo.collaborators.all()
-#
-    #can_see = user == owner or repo.is_public
-    #can_edit = user in collaborators
-    #if not (can_see or can_edit):
-        #return HttpResponse('Not authorized', status=401)
-#
-    #query = request.GET.urlencode()
-    #new_path = 'snapshot/%s' % path
-    #filename = path.split('/')[-1]
-    #url = cgit_url(user_name, repo_name, new_path, query)
-    #(fname, info) = urlretrieve(url)
-    #response = HttpResponse(FileWrapper(open(fname)), content_type='application/force-download')
-    #response['Content-Disposition'] = 'attachment; filename="%s"' % filename]
-    #response['X-Sendfile'] = smart_str(filename)
-    #return response
+    user = request.user
+    owner = get_object_or_404(User, username=user_name)
+    repo = get_object_or_404(Repository, owner=owner, name=repo_name)
+    collaborators = repo.collaborators.all()
+ 
+    can_see = user == owner or repo.is_public
+    can_edit = user in collaborators
+    if not (can_see or can_edit):
+        return HttpResponse('Not authorized', status=401)
+  
+    query = request.GET.urlencode()
+    new_path = 'snapshot/%s' % path
+    filename = path.split('/')[-1]
+    url = cgit_url(user_name, repo_name, new_path, query)
+    (fname, info) = urlretrieve(url)
+    response = HttpResponse(FileWrapper(open(fname)), content_type='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    response['X-Sendfile'] = filename
+    return response
 
 
 def repo_browse(request, user_name, repo_name, path=None):
