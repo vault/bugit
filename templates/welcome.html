@@ -3,9 +3,48 @@
 {% block title %}Welcome{% endblock %}
 
 {% block content %}
-<h1>Welcome</h1>
 
-<p>You've reached my experimental git hosting site. Feel free to take a look around.</p>
-<p>This site is intended for people to create, manage, and collaborate on git repositories</p>
-<p>To get started, go to your <a href="/repo">repo page</a> and add a public key.</p>
+<div class="container">
+<div class="hero-unit">
+
+<h1>Welcome to Git Hosting</h1>
+
+<p>You've reached my experimental git hosting site. Feel free to take a look
+around. With this site you can create, manage, and collaborate on git
+repositories. Happy hacking!</p>
+
+</div>
+
+<div class="row">
+
+<div class="span4">
+<h2>Fill in your profile</h2>
+
+<p>Go to your settings page and fill in your name so others know who you are.
+Or if you're the pseudonymous type, make one up!</p>
+
+<a href="/settings/"><button class="btn"><i class="icon-pencil"></i> Edit Settings</button></a>
+</div>
+
+<div class="span4">
+<h2>Set up some keys</h2>
+
+<p>After that you can <a href="/repo/create/">create a repository</a>. Clone it and push some stuff to it. Add a friend and work collaboratively on a project. Happy hacking.</p>
+
+<a href="/settings/keys/create/"><button class="btn"><i class="icon-edit"></i>
+Add a Key</button></a> </div>
+
+<div class="span4">
+<h2>Create a repository</h2>
+
+<p>Use the bar at the top to quickly create a repository. You can provide a
+small description or your project and manage who gets access</p>
+
+<a href="/repo/create/"><button class="btn btn-primary"><i class="icon-plus icon-white"></i> Create a repository</button></a>
+
+</div>
+
+</div>
+
+</div>
 {% endblock %}
