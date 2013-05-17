@@ -28,7 +28,7 @@
                             <li><a href="{% url repo_list user.username %}">My Repositories</a></li>
                             <li><a href="{% url user_settings %}">Settings</a></li>
                         </ul>
-                        <form class="navbar-form pull-right" action="{% url repo_add user.username %}" method="post">
+                        <form class="navbar-form pull-right" action="{% url repo_new user.username %}" method="post">
                             {% csrf_token %}
                             <input type="text" name="repo_name" placeholder="New Repository"/>
                             <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white"></i> Create</button>

@@ -2,13 +2,14 @@
 
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import *
+from django.shortcuts import redirect, get_object_or_404, render_to_response
 from django.forms.models import model_to_dict
+from django.template import RequestContext
 
 from common.models import Repository
 from repo_manage.forms import RepositoryForm, NewRepositoryForm
 
-from common.util import *
+from common.util import get_context
 
 def index(request):
     return HttpResponse("Index")
@@ -17,7 +18,6 @@ def index(request):
 def repo_view(request, user_name, repo_name):
     user = request.user
     owner = get_object_or_404(User, username=user_name)
-    name = "%s/%s" %(user_name, repo_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
     collaborators = repo.collaborators.all()
 
@@ -28,7 +28,7 @@ def repo_view(request, user_name, repo_name):
         return HttpResponse('Not authorized', status=401)
 
     context = get_context(request,
-            { 'repo' : repo, 'owner' : owner,'can_view':can_view, 'collaborators': collaborators })
+            {'repo' : repo, 'owner' : owner,'can_view':can_view, 'can_edit': can_edit, 'collaborators': collaborators })
     return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
@@ -70,8 +70,8 @@ def repo_add(request, user_name):
 
 
 def repo_new(request, user_name):
-    owner = get_object_or_404(user, username=user_name)
     user = request.user
+    owner = get_object_or_404(user, username=user_name)
 
     if owner != user:
         return HttpResponse("You can't add this", status=401)
@@ -80,7 +80,7 @@ def repo_new(request, user_name):
         new_form = NewRepositoryForm()
         form = RepositoryForm()
     elif request.method == 'POST':
-        form = RepositoryForm(request.POST, owner=owner, name='f686bdfe')
+        form = RepositoryForm(request.POST, owner=owner)
         new_form = NewRepositoryForm(request.POST)
         if new_form.is_valid() and form.is_valid():
             repo = form.save(commit=False)
