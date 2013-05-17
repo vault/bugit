@@ -13,9 +13,9 @@ from common.util import get_context
 
 def cgit_url(user_name, repo_name, path, query):
     if path is not None:
-        base = get('http://localhost:8080/view/%s/%s/%s' %(user_name, repo_name, path))
+        base = 'http://localhost:8080/view/%s/%s/%s' %(user_name, repo_name, path)
     else:
-        base = get('http://localhost:8080/view/%s/%s' %(user_name, repo_name))
+        base = 'http://localhost:8080/view/%s/%s' %(user_name, repo_name)
     if len(query)>1:
         base = "%s?%s" % (base, query)
     return base
