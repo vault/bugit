@@ -28,6 +28,7 @@
                     <div class="nav-collapse collapse">
                         {% if user.is_authenticated %}
                         <ul class="nav">
+                            <li><a href="/">Home</a></li>
                             <li><a href="{% url repo_list user.username %}">My Repositories</a></li>
                             <li><a href="{% url user_settings %}">Settings</a></li>
                         </ul>
