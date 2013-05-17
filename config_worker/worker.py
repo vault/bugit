@@ -1,7 +1,7 @@
 
 import os, sys
 
-this = os.path.dirname(os.path.abaspath(__file__))
+this = os.path.dirname(os.path.abspath(__file__))
 up1 = os.path.join(this, '..')
 up2 = os.path.join(this, '..', '..')
 
