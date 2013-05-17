@@ -2,6 +2,8 @@
 
 {% block title %}Browsing{% endblock %}
 
+{% block head %}<link rel="stylesheet" media="screen" href="/static/css/cgit.css" /> {% endblock %}
+
 {% block content %}
 {% autoescape off %}
     {{ repo_html }}
