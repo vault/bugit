@@ -63,10 +63,16 @@ class Collaboration(models.Model):
         return "{0} access for {1} on {2}".format(self.permission, self.user, self.repository)
     
 
+class CollaborationInline(admin.TabularInline):
+    model = Collaboration
+    extra = 1
+
+class RepoAdmin(admin.ModelAdmin):
+    inlines = (CollaborationInline,)
+
 
 admin.site.register(PublicKey)
-admin.site.register(Repository)
-admin.site.register(Collaboration)
+admin.site.register(Repository, RepoAdmin)
 
 post_save.connect(dispatch_repo_work,
         sender=PublicKey, dispatch_uid="pubkey_save_dispatcher")
