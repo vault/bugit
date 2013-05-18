@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.db import IntegrityError
 
 from common.models import Repository
-from repo_manage.forms import RepositoryForm, NewRepositoryForm
+from repo_manage.forms import RepositoryForm, NewRepositoryForm, CollaborationFormSet
 
 from common.util import get_context
 
@@ -109,13 +109,16 @@ def repo_edit(request, user_name, repo_name):
 
     if request.method == 'GET':
         form = RepositoryForm(model_to_dict(repo))
+        colab_form = CollaborationFormSet(instance=repo)
     elif request.method == 'POST':
         form = RepositoryForm(request.POST, instance=repo)
-        if form.is_valid():
+        colab_form = CollaborationFormSet(request.POST, instance=repo)
+        if form.is_valid() and colab_form.is_valid():
             repo = form.save()
+            colab_form.save()
             return redirect('repo_view', user.username, repo.name)
 
-    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, })
+    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, 'colab': colab_form})
     return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))
 
 

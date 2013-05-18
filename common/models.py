@@ -23,6 +23,7 @@ class PublicKey(models.Model):
         return "%s for \"%s\"" % (self.description, self.owner.username)
 
 
+
 class Repository(models.Model):
     owner = models.ForeignKey(User, related_name='owner_set')
     name = models.SlugField(max_length=100, editable=False)
@@ -30,7 +31,7 @@ class Repository(models.Model):
     long_description = models.TextField(blank=True)
     is_public = models.BooleanField()
     is_created = models.BooleanField()
-    collaborators = models.ManyToManyField(User, related_name='collaborator_set', blank=True)
+    collaborators = models.ManyToManyField(User, through='Collaboration', related_name='collaborator_set', blank=True)
 
     class Meta:
         unique_together = ("owner", "name")
@@ -45,8 +46,27 @@ class Repository(models.Model):
         return "git://eng-git.bu.edu/%s/%s" % (self.owner.username, self.name)
 
 
+class Collaboration(models.Model):
+    PERMISSIONS = (
+        ('O', 'Owner'),
+        ('R', 'Read'),
+        ('W', 'Read/Write'),
+    )
+    user = models.ForeignKey(User)
+    repository = models.ForeignKey(Repository)
+    permission = models.CharField(max_length=1, choices=PERMISSIONS)
+
+    class Meta:
+        unique_together = ("user", "repository")
+
+    def __unicode__(self):
+        return "{0} access for {1} on {2}".format(self.permission, self.user, self.repository)
+    
+
+
 admin.site.register(PublicKey)
 admin.site.register(Repository)
+admin.site.register(Collaboration)
 
 post_save.connect(dispatch_repo_work,
         sender=PublicKey, dispatch_uid="pubkey_save_dispatcher")
