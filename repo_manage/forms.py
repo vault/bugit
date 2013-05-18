@@ -3,7 +3,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 
-from common.models import Repository, Collaboration
+from common.models import Repository
 
 slug_errors = {
         'invalid' : "Use only letters, numbers, underscores, and hyphens",
@@ -20,3 +20,4 @@ class RepositoryForm(ModelForm):
 
 
 CollaborationFormSet = inlineformset_factory(Repository, Repository.collaborators.through, exclude=('repository'))
+
