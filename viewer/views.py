@@ -11,12 +11,12 @@ from common.util import get_context
 
 
 
-def cgit_url(user_name, repo_name, path, query):
+def cgit_url(user_name, repo_name, path, query=None):
     if path is not None:
         base = 'http://localhost:8080/view/%s/%s/%s' %(user_name, repo_name, path)
     else:
         base = 'http://localhost:8080/view/%s/%s' %(user_name, repo_name)
-    if len(query)>1:
+    if query is not None and len(query)>1:
         base = "%s?%s" % (base, query)
     return base
 
@@ -39,8 +39,12 @@ def repo_plain(request, user_name, repo_name, path):
     can_edit = user in collaborators
     if not (can_see or can_edit):
         return HttpResponse('Not authorized', status=401)
+
     query = request.GET.urlencode()
-    url = cgit_url(user_name, repo_name, path, query)
+    new_path = 'plain/%s' % path
+    url = cgit_url(user_name, repo_name, new_path, query)
+    #text = get(url)
+    #response = HttpResponse(text.text, content_type='text/plain')
     (fname, info) = urlretrieve(url)
     response = HttpResponse(FileWrapper(open(fname)), content_type='text/plain')
     return response
