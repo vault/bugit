@@ -43,17 +43,33 @@ def repo_plain(request, user_name, repo_name, path):
     query = request.GET.urlencode()
     new_path = 'plain/%s' % path
     url = cgit_url(user_name, repo_name, new_path, query)
-    #text = get(url)
-    #response = HttpResponse(text.text, content_type='text/plain')
     (fname, info) = urlretrieve(url)
     response = HttpResponse(FileWrapper(open(fname)), content_type='text/plain')
     return response
     
 
 
-
 def repo_snapshot(request, user_name, repo_name, path):
-    pass
+    return HttpResponse("Not implemented yet")
+    #user = request.user
+    #owner = get_object_or_404(User, username=user_name)
+    #repo = get_object_or_404(Repository, owner=owner, name=repo_name)
+    #collaborators = repo.collaborators.all()
+#
+    #can_see = user == owner or repo.is_public
+    #can_edit = user in collaborators
+    #if not (can_see or can_edit):
+        #return HttpResponse('Not authorized', status=401)
+#
+    #query = request.GET.urlencode()
+    #new_path = 'snapshot/%s' % path
+    #filename = path.split('/')[-1]
+    #url = cgit_url(user_name, repo_name, new_path, query)
+    #(fname, info) = urlretrieve(url)
+    #response = HttpResponse(FileWrapper(open(fname)), content_type='application/force-download')
+    #response['Content-Disposition'] = 'attachment; filename="%s"' % filename]
+    #response['X-Sendfile'] = smart_str(filename)
+    #return response
 
 
 def repo_browse(request, user_name, repo_name, path=None):
