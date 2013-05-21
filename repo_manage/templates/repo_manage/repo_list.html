@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Listing {{ user.get_full_name }}&apos;s Repositories{% endblock %}
+{% block title %}Listing {{ owner.get_full_name }}&apos;s Repositories{% endblock %}
 
 
 {% block content %}
@@ -25,7 +25,7 @@
     <p>You have no git repositories! You should create one</p>
 {% endifequal %}
 {% ifnotequal owner user %}
-    <p>{{ owner.get_full_name }} has no git repositores!</p>
+    <p>{{ owner.first_name }} has no git repositores!</p>
 {% endifnotequal %}
 {% endif %}
 
@@ -35,7 +35,7 @@
 {% endifequal %}
 
 {% ifnotequal owner user %} 
-<h2>Your collaborations with {{ owner.username }}</h2>
+<h2>Your collaborations with {{ owner.first_name }}</h2>
 {% endifnotequal %}
 <ul>
     {% for repo in colab %}
@@ -46,7 +46,7 @@
 </ul>
 {% else %}
 {% ifnotequal owner user %}
-<p>You've never collaborated with {{ owner.get_full_name }}</p>
+<p>You've never collaborated with {{ owner.first_name }}</p>
 {% endifnotequal %}
 {% endif %}
 
