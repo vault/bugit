@@ -66,7 +66,6 @@ def repo_snapshot(request, user_name, repo_name, path):
     (fname, info) = urlretrieve(url)
     response = HttpResponse(FileWrapper(open(fname)), content_type='application/force-download')
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-    response['X-Sendfile'] = filename
     return response
 
 
