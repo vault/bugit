@@ -28,7 +28,7 @@ def user_index(request, user_name):
     return redirect('repo_list', user_name)
 
 
-def repo_plain(request, user_name, repo_name, path):
+def repo_plain(request, user_name, repo_name, path, prefix='plain'):
     user = request.user
     owner = get_object_or_404(User, username=user_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
@@ -40,7 +40,7 @@ def repo_plain(request, user_name, repo_name, path):
         return HttpResponse('Not authorized', status=401)
 
     query = request.GET.urlencode()
-    new_path = 'plain/%s' % path
+    new_path = '%s/%s' % (prefix, path)
     url = cgit_url(user_name, repo_name, new_path, query)
     (fname, info) = urlretrieve(url)
     response = HttpResponse(FileWrapper(open(fname)), content_type='text/plain')
