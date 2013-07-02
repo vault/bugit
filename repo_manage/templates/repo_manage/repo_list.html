@@ -13,41 +13,49 @@
 <h2>{{ owner.get_full_name }}&apos;s Repositories</h2>
 {% endifnotequal %}
 
-{% if repos %}
-<ul>
-    {% for repo in repos %}
-    <li>
-    <a href="{% url repo_view owner.username repo.name %}">{{ repo.name }}</a> &mdash; {{ repo.description }}</li>
-    {% endfor %}
-</ul>
+{% if owned %}
+    <ul>
+        {% for repo in owned %}
+        <li>
+        <a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.name }}</a> &mdash; {{ repo.description }}
+        </li>
+        {% endfor %}
+    </ul>
 {% else %}
-{% ifequal owner user %}
-    <p>You have no git repositories! You should create one</p>
-{% endifequal %}
-{% ifnotequal owner user %}
-    <p>{{ owner.first_name }} has no git repositores!</p>
-{% endifnotequal %}
+    {% ifequal owner user %}
+        <p>You have no git repositories! You should create one</p>
+    {% endifequal %}
+    {% ifnotequal owner user %}
+        <p>{{ owner.first_name }} has no git repositores!</p>
+    {% endifnotequal %}
 {% endif %}
 
-{% if colab %}
+{% if write %}
 {% ifequal owner user %} 
-<h2>Your collaborations</h2>
+<h3>Repos you can push to</h3>
 {% endifequal %}
 
 {% ifnotequal owner user %} 
-<h2>Your collaborations with {{ owner.first_name }}</h2>
+<h2>Other repos {{ owner.first_name }} works on</h2>
 {% endifnotequal %}
 <ul>
-    {% for repo in colab %}
+    {% for repo in write %}
     <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
     &mdash; {{ repo.description }}</li>
     </li>
     {% endfor %}
 </ul>
-{% else %}
-{% ifnotequal owner user %}
-<p>You've never collaborated with {{ owner.first_name }}</p>
-{% endifnotequal %}
+{% endif %}
+
+{% if read %}
+<h3>Repos you can read from</h3>
+<ul>
+    {% for repo in read %}
+    <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
+    &mdash; {{ repo.description }}</li>
+    </li>
+    {% endfor %}
+</ul>
 {% endif %}
 
 {% endblock %}

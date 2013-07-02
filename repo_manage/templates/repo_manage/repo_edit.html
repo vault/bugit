@@ -50,6 +50,7 @@
         </div>
     {% endfor %}
 
+    {% if colab %}
     <table class="table table-condensed table-striped">
         <thead><tr>
         <th>Username</th>
@@ -69,6 +70,7 @@
         <!--</div>      -->
     {% endfor %}
     </tbody></table>
+    {% endif %}
 
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>

@@ -45,6 +45,15 @@ class Repository(models.Model):
     def get_public_clone_url(self):
         return "git://eng-git.bu.edu/%s/%s" % (self.owner.username, self.name)
 
+    def owners(self):
+        return self.collaborators.filter(collaboration__permission='O')
+    
+    def readers(self):
+        return self.collaborators.filter(collaboration__permission='R')
+
+    def writers(self):
+        return self.collaborators.filter(collaboration__permission='W')
+
 
 class Collaboration(models.Model):
     PERMISSIONS = (
@@ -62,6 +71,27 @@ class Collaboration(models.Model):
     def __unicode__(self):
         return "{0} access for {1} on {2}".format(self.permission, self.user, self.repository)
     
+# Methods for getting repos
+#
+# Just pass the user in as the first arg... 
+# In Django 1.5 we could have subclassed AbstractUser for these
+def owned_repos(self, include_private=False):
+    if include_private:
+        return self.collaborator_set.filter(collaboration__permission='O')
+    else:
+        return self.collaborator_set.filter(collaboration__permission='O', is_public=True)
+
+def writable_repos(self, include_private=False):
+    if include_private:
+        return self.collaborator_set.filter(collaboration__permission='W')
+    else:
+        return self.collaborator_set.filter(collaboration__permission='W', is_public=True)
+
+def readable_repos(self, include_private=False):
+    if include_private:
+        return self.collaborator_set.filter(collaboration__permission='R')
+    else:
+        return self.collaborator_set.filter(collaboration__permission='R', is_public=True)
 
 class CollaborationInline(admin.TabularInline):
     model = Collaboration

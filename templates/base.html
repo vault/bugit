@@ -34,7 +34,7 @@
                         </ul>
                         <form class="navbar-form pull-right" action="{% url repo_simple_new %}" method="post">
                             {% csrf_token %}
-                            <input type="text" name="{{new_repo_form.repo_name.html_name}}" placeholder="New Repository"/>
+                            <input type="text" name="repo_name" placeholder="New Repository"/>
                             <button type="submit" class="btn btn-primary"><i class="icon-plus icon-white"></i> Create</button>
                         </form>
                         </ul>
