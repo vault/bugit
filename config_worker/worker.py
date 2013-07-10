@@ -14,7 +14,7 @@ for path in paths:
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
 
 from gitolite import GitoliteUserConf, RepositoryConf
-from common.models import User, PublicKey, Repository
+from common.models import User
 
 from common.redis_client import redis_db, CommandQueue
 
@@ -30,11 +30,13 @@ def next_user(r):
 
 
 def config_repo(config, repo, user):
+    permission_map = {'R':'R', 'W':'RW', 'O':'RW+'}
     rc = RepositoryConf(repo.name, user.username, 
             user.get_full_name(), repo.description, repo.is_public)
 
-    for c in repo.collaborators.all():
-        rc.add_collaborator(c.username)
+    for c in repo.collaboration_set.all():
+        perm = permission_map[c.permission]
+        rc.add_collaborator(c.user.username, perm)
 
     config.add_repo(rc)
 

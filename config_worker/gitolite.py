@@ -31,19 +31,19 @@ class RepositoryConf(object):
         self.collaborators = []
 
 
-    def add_collaborator(self, c):
-        self.collaborators.append(c)
+    def add_collaborator(self, user, permission):
+        self.collaborators.append((user, permission))
 
 
     def config_block(self):
         lines = []
         lines.append("\n")
         lines.append("repo %s" % self.path)
-        lines.append("\tRW+ = @user-%s" % self.user)
+        #lines.append("\tRW+ = @user-%s" % self.user)
         lines.append("\towner = %s" % self.user_name)
         lines.append("\tdesc = %s" % self.description)
         for c in self.collaborators:
-            lines.append("\tRW = @user-%s" % c)
+            lines.append("\t%s = @user-%s" % (c[1], c[0]))
         if self.public:
             lines.append("\tR = @all")
             lines.append("\tR = daemon")
