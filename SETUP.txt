@@ -16,7 +16,7 @@ mod_wsgi
 
 Python Stuff
 ------------
-Django
+Django14
 Django-south
 MySQL-python
 python-requests
@@ -112,7 +112,7 @@ Before we can run the App, there are a couple of things to do.
 First we need a user for the app's config builder to run as.
 
 # groupadd -g <gid> bugit_worker
-# adduser -d /srv/git -u <uid> -g <gid> bugit_worker
+# adduser -d /srv/bugit -u <uid> -g <gid> bugit_worker
 # su - bugit_worker
 # ssh-keygen
 
