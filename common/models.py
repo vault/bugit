@@ -63,7 +63,7 @@ class Collaboration(models.Model):
     )
     user = models.ForeignKey(User)
     repository = models.ForeignKey(Repository)
-    permission = models.CharField(max_length=1, choices=PERMISSIONS)
+    permission = models.CharField(max_length=1, choices=PERMISSIONS, default='R')
 
     class Meta:
         unique_together = ("user", "repository")
