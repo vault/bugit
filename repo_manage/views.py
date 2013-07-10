@@ -126,7 +126,7 @@ def repo_edit(request, user_name, repo_name):
         if form.is_valid() and colab_form.is_valid():
             repo = form.save()
             colab_form.save()
-            return redirect('repo_view', user.username, repo.name)
+            return redirect('repo_view', owner.username, repo.name)
 
     context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, 'colab': colab_form})
     return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))

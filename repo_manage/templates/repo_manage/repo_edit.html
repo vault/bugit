@@ -13,7 +13,7 @@
 {% if new_form %}
     <form action="{% url repo_new %}" method="post">
 {% else %}
-    <form action="{% url repo_edit user.username repo.name %}" method="post">
+    <form action="{% url repo_edit owner.username repo.name %}" method="post">
 {% endif %}
     {% csrf_token %}
     {% if new_form %}
