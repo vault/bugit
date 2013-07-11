@@ -29,16 +29,22 @@ class CollaborationForm(ModelForm):
     def __init__(self, **kwargs):
         super(CollaborationForm, self).__init__(**kwargs)
         if 'instance' in kwargs:
-            print kwargs['instance']
             self.fields['user'] = forms.CharField(initial=kwargs['instance'].user.username)
 
-    def save(self, **kwargs):
+    def clean(self):
+        cleaned_data = super(CollaborationForm, self).clean()
+        self.instance.full_clean()
+        return cleaned_data
+
+    def clean_user(self):
         username = self.cleaned_data['user']
-        user = User.objects.get(username=username)
-        self.instance.user = user
-
-        return super(CollaborationForm, self).save(**kwargs)
-
+        user = None
+        try:
+            user = User.objects.get(username=username)
+            self.instance.user = user
+        except User.DoesNotExist:
+            raise forms.ValidationError("User %(username_s does not exist",
+                    params={'username':username})
 
 
 
