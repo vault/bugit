@@ -57,11 +57,22 @@
         <th>Permission</th>
         <th>Remove Access</th>
         {{ colab.management_form }}
-    </tr></thead>
+    </tr>
+    </thead>
     <tbody>
+    {% if colab.errors %}
+        <tr class="error">
+            <td colspan=3>
+                Double check that the username you entered is correct and has logged into the site, and that you aren't
+                adding the same user twice.
+            </td>
+        </tr>
+    {% endif %}
     {% for c in colab %}
         <!--<div class="row">-->
-        <tr>
+        {% if c.errors %}
+            <tr class="error">
+        {% endif %}
         {{ c.id }}
         <td>{{ c.user }}</td>
         <td>{{ c.permission }}</td>
