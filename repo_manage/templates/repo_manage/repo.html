@@ -52,6 +52,7 @@ git push origin master</pre>
     <a class="span" href="{% url repo_edit owner.username repo.name %}"><button class="btn" type="submit"><i class="icon-edit"></i> Edit</button></a>
     <!--<form class="span" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>-->
 {% endif %}
+<a class="span" href="{% url repo_list owner.username %}"><button class="btn"><i class="icon-arrow-left"></i> Back to list</button></a>
 </div>
 
 {% endblock %}
