@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Send Feedback{% endblock %}
+
+{% block content %}
+<h1>Send Feedback</h1>
+
+<form action="{% url feedback %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+
+    <div class="row">
+        <button class="span btn btn-primary" type="submit"><i class="icon-envelope icon-white"></i> Send Feedback</button>
+    </div>
+</form>
+
+{% endblock %}

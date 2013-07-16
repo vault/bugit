@@ -31,6 +31,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="{% url repo_list user.username %}">My Repositories</a></li>
                             <li><a href="{% url user_settings %}">Settings</a></li>
+                            <li><a href="{% url feedback %}">Feedback</a></li>
                         </ul>
                         <form class="navbar-form pull-right" action="{% url repo_simple_new %}" method="post">
                             {% csrf_token %}
