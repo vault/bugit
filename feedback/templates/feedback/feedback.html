@@ -4,6 +4,9 @@
 
 {% block content %}
 <h1>Send Feedback</h1>
+{% if success %}
+    <p>Thank you for your feedback.</p>
+{% endif %}
 
 <form action="{% url feedback %}" method="post">
     {% csrf_token %}
