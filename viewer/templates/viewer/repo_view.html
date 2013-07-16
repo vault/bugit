@@ -9,4 +9,8 @@
     {{ repo_html }}
 {% endautoescape %}
 
+<div class="row">
+    <a class="span" href="{% url repo_view repo.owner repo.name %}"><button class="btn"><i class="icon-arrow-left"></i> Back to Repo</button></a>
+</div>
+
 {% endblock %}

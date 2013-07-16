@@ -84,7 +84,7 @@ def repo_browse(request, user_name, repo_name, path=None):
     url = cgit_url(user_name, repo_name, path, query)
     text = get(url)
 
-    context = get_context(request, {'repo_html':text.text})
+    context = get_context(request, {'repo_html':text.text, 'repo':repo})
     return render_to_response('viewer/repo_view.html', context)
 
 
