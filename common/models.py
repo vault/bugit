@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.contrib import admin
+import base64, hashlib
 
 from common.signals import dispatch_repo_work
 
@@ -22,6 +23,10 @@ class PublicKey(models.Model):
     def __unicode__(self):
         return "%s for \"%s\"" % (self.description, self.owner.username)
 
+    def fingerprint(self):
+        key = base64.b64decode(self.pubkey.strip().partition('ssh-rsa ')[2])
+        plain = hashlib.md5(key).hexdigest()
+        return ':'.join(a+b for a,b in zip(plain[::2], plain[1::2]))
 
 
 class Repository(models.Model):
