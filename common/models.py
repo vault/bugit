@@ -5,12 +5,13 @@ from django.contrib import admin
 import base64, hashlib
 
 from common.signals import dispatch_repo_work
+from validators import validate_key
 
 
 class PublicKey(models.Model):
     owner = models.ForeignKey(User)
     description = models.SlugField(max_length=100)
-    pubkey = models.TextField(blank=False)
+    pubkey = models.TextField(blank=False, validators=[validate_key])
     is_active = models.BooleanField()
 
     class Meta:
