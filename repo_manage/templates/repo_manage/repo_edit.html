@@ -40,25 +40,24 @@
         {% else %}
         <div class="control-group">
         {% endif %}
-        <label class="control-lable" for="{{ field.html_name}}">{{ field.label }}</label>
-        <div class="controls">
-            {{ field }}
-            {% if field.errors %}
-            <span class="help-inline">{{ field.errors }}</span>
-            {% endif %}
-        </div>
+            <label class="control-lable" for="{{ field.html_name}}">{{ field.label }}</label>
+            <div class="controls">
+                {{ field }}
+                {% if field.errors %}
+                <span class="help-inline">{{ field.errors }}</span>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 
     {% if colab %}
-    <table class="table table-condensed table-striped">
+    {{ colab.management_form }}
+    <table class="table table-striped">
         <thead><tr>
         <th>Username</th>
         <th>Permission</th>
         <th>Remove Access</th>
-        {{ colab.management_form }}
-    </tr>
-    </thead>
+    </tr></thead>
     <tbody>
     {% if colab.errors %}
         <tr class="error">
@@ -72,6 +71,8 @@
         <!--<div class="row">-->
         {% if c.errors %}
             <tr class="error">
+        {% else %}
+            <tr>
         {% endif %}
         {{ c.id }}
         <td>{{ c.user }}</td>
@@ -80,7 +81,8 @@
         </tr>
         <!--</div>      -->
     {% endfor %}
-    </tbody></table>
+    </tbody>
+    </table>
     {% endif %}
 
     <div class="row">
