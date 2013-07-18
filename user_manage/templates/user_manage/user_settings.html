@@ -3,8 +3,9 @@
 {% block title %}User settings{% endblock %}
 
 {% block content %}
-<h1>User Settings</h1>
-<form class="form-inline" action="{% url user_settings %}" method="post">
+<h1>Settings</h1>
+<h2>Information</h2>
+<form class="form form-inline" action="{% url user_settings %}" method="post">
     {% csrf_token %}
     {{ user_form.as_p }}
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
@@ -12,23 +13,29 @@
 
 <h2>Public Keys</h2>
 {% if keys %}
+    <table class="table table-striped">
+        <thead><tr>
+                <th>Description</th>
+                <th>Fingerprint</th>
+                <th>Delete</th>
+        </tr></thead>
     {% for key in keys %}
-    <div>
-        <h3>{{ key.description }}</h3>
-        <pre>{{ key.pubkey }}</pre>
-        <div class="pull-right">
-            <a class="span" href="{% url pubkey_edit key.id %}">{% csrf_token %}<button class="btn" type="submit" ><i class="icon-edit"></i> Edit</button></a>
-        </div>
-    </div>
+    <tr>
+        <td>{{ key.description }}</td>
+        <td>{{ key.fingerprint }}</td>
+        <td><form method="post" action="{% url pubkey_delete key.id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit" ><i class="icon-white icon-remove"></i> Delete</button>
+            </form>
+    </tr>
     {% endfor %}
+    </table>
 {% endif %}
 
-<br/>
-<h2>New Public Key</h2>
-<form action={% url pubkey_add %} method="post">
-    {% csrf_token %}
-    {{ pk_form.as_p }}
-    <button class="btn btn-primary" type="submit"><i class="icon-plus icon-white"></i> New Public Key</button>
-</form>
+<div class="row">
+<a href="{% url pubkey_add %}">
+    <button class="btn btn-primary span pull-right" ><i class="icon-plus icon-white"></i> New Public Key</button>
+</a>
+</div>
 
 {% endblock %}
