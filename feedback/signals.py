@@ -8,6 +8,9 @@ def mail_staff(sender, **kwargs):
 
     staff = User.objects.filter(is_staff=True)
     emails = [u.email for u in staff]
+    
+    #TODO figure out who to actually email
+    emails = [u'michaelabed@gmail.com']
 
     send_mail("[Git Feedback] " + message.subject, message.message,
             message.sender.email, emails)
