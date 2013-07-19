@@ -5,13 +5,13 @@ from django.contrib import admin
 import base64, hashlib
 
 from common.signals import dispatch_repo_work
-from validators import validate_key
+from validators import validate_key_format, validate_key_decode
 
 
 class PublicKey(models.Model):
     owner = models.ForeignKey(User)
     description = models.SlugField(max_length=100)
-    pubkey = models.TextField(blank=False, validators=[validate_key])
+    pubkey = models.TextField(blank=False, validators=[validate_key_format, validate_key_decode])
     is_active = models.BooleanField()
 
     class Meta:
@@ -25,7 +25,7 @@ class PublicKey(models.Model):
         return "%s for \"%s\"" % (self.description, self.owner.username)
 
     def fingerprint(self):
-        key = base64.b64decode(self.pubkey.strip().partition('ssh-rsa ')[2])
+        key = base64.b64decode(self.pubkey.split(' ')[1])
         plain = hashlib.md5(key).hexdigest()
         return ':'.join(a+b for a,b in zip(plain[::2], plain[1::2]))
 
