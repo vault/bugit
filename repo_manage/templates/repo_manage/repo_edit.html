@@ -87,7 +87,9 @@
 
     <div class="row">
     <button class="span btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
+{% if repo %}
     <a class="span" href="{% url repo_view owner.username repo.name %}"><button class="btn"><i class="icon-arrow-left"></i> Back</button></a>
+{% endif %}
     </div>
 </form>
 
