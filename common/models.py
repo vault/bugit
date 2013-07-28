@@ -31,10 +31,15 @@ class PublicKey(models.Model):
 
 
 class Repository(models.Model):
+    desc_formats = (
+            ('M', 'Markdown'),
+            ('T', 'Text'),
+    )
     owner = models.ForeignKey(User, related_name='owner_set')
     name = models.SlugField(max_length=100, editable=False)
     description = models.CharField(max_length=100, blank=True)
     long_description = models.TextField(blank=True)
+    description_format = models.CharField(max_length=1, choices=desc_formats, blank=True)
     is_public = models.BooleanField()
     is_created = models.BooleanField()
     collaborators = models.ManyToManyField(User, through='Collaboration', related_name='collaborator_set', blank=True)
