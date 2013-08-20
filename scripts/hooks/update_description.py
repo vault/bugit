@@ -62,8 +62,10 @@ def clean_readme(readme_text):
     opportunity. We need to make sure people don't start tossing binaries into it
     or some weird browser exploits.
     """
-    #TODO: actually filter this. I'm terrible, I know
-    return readme_text
+    control_chars = ''.join(map(unichr, range(0,32)+range(127,160)))
+    pattern = re.compile(r'[%s]' % re.escape(control_chars), re.I|re.U)
+    clean_text = '\n'.join(map(lambda l: pattern.sub('', l), readme_text.split('\n')))
+    return clean_text
 
 
 def readme_format(fmt):
