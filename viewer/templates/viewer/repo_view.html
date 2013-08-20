@@ -14,49 +14,68 @@ div#cgit div.content {border-bottom: 0;}
 
 {% block inner_content %}
 
-<ul class="nav nav-tabs">
-    <li class="{% ifequal method "summary" %}active{%endifequal%}">
-        <a href="{% url repo_browse owner.username repo.name %}">Summary</a>
-    </li>
+<div class="">
+    <div class="">
+        <ul class="nav nav-tabs">
+            <li class="{% ifequal method "summary" %}active{%endifequal%}">
+            <a href="{% url repo_browse owner.username repo.name %}">Summary</a>
+            </li>
 
-    <li class="{% ifequal method "refs" %}active{%endifequal%}">
-        <a href="{% url repo_browse owner.username repo.name %}refs/">Refs</a>
-    </li>
+            <li class="{% ifequal method "refs" %}active{%endifequal%}">
+            <a href="{% url repo_browse owner.username repo.name %}refs/">Refs</a>
+            </li>
 
-    <li class="{% ifequal method "log" %}active{%endifequal%}">
-        <a href="{% url repo_browse owner.username repo.name %}log/">Log</a>
-    </li>
+            <li class="{% ifequal method "log" %}active{%endifequal%}">
+            <a href="{% url repo_browse owner.username repo.name %}log/">Log</a>
+            </li>
 
-    {% if id %}
-        <li class="{% ifequal method "tree" %}active{%endifequal%}">
+            {% if id %}
+            <li class="{% ifequal method "tree" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}tree/?id={{ id }}">Tree</a>
-        </li>
+            </li>
 
-        <li class="{% ifequal method "commit" %}active{%endifequal%}">
+            <li class="{% ifequal method "commit" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}commit/?id={{ id }}">Commit</a>
-        </li>
+            </li>
 
-        <li class="{% ifequal method "diff" %}active{%endifequal%}">
+            <li class="{% ifequal method "diff" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}diff/?id={{ id }}">Diff</a>
-        </li>
-    {% else %}
-        <li class="{% ifequal method "tree" %}active{%endifequal%}">
+            </li>
+            {% else %}
+            <li class="{% ifequal method "tree" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}tree/">Tree</a>
-        </li>
+            </li>
 
-        <li class="{% ifequal method "commit" %}active{%endifequal%}">
+            <li class="{% ifequal method "commit" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}commit/">Commit</a>
-        </li>
+            </li>
 
-        <li class="{% ifequal method "diff" %}active{%endifequal%}">
+            <li class="{% ifequal method "diff" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}diff/">Diff</a>
-        </li>
-    {% endif %}
+            </li>
+            {% endif %}
 
-    <li class="{% ifequal method "stats" %}active{%endifequal%}">
-        <a href="{% url repo_browse owner.username repo.name %}stats/">Stats</a>
-    </li>
-</ul>
+            <li class="{% ifequal method "stats" %}active{%endifequal%}">
+            <a href="{% url repo_browse owner.username repo.name %}stats/">Stats</a>
+            </li>
+        <form class="form form-search navbar-form pull-right" method="GET" action="{% url repo_browse owner.username repo.name %}log/">
+            <input type="hidden" id="search_type" name="qt" value="{{ qtype }}" />
+            <div class="input-prepend">
+                <div class="btn-group">
+                    <button type="button" class="btn span2 dropdown-toggle" data-toggle="dropdown"><span id="search_message">{{ search_text }}</span> <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li onclick="$('#search_type').val('grep');$('#search_message').html('Log Message');"><a>Log Message</a></li>
+                        <li onclick="$('#search_type').val('author');$('#search_message').html('Author');"><a>Author</a></li>
+                        <li onclick="$('#search_type').val('committer');$('#search_message').html('Committer');"><a>Committer</a></li>
+                        <li onclick="$('#search_type').val('range');$('#search_message').html('Range');"><a>Range</a></li>
+                    </ul>
+                </div>
+                <input class="search-query span3" placeholder="Search" type="text" name="q" value="{{ q }}" />
+            </div>
+        </form>
+        </ul>
+    </div>
+</div>
 {% autoescape off %}
     {{ repo_html }}
 {% endautoescape %}

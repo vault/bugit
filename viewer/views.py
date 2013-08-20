@@ -78,7 +78,12 @@ def repo_browse(request, user_name, repo_name, path=None):
     can_see = user == owner or repo.is_public
     can_edit = user in collaborators
 
+    if not (can_see or can_edit):
+        return HttpResponse('Not authorized', status=401)
+
     commit_id = None
+    q = ''
+    qtype = 'grep'
 
     method = None
     parts = request.path.split('/')
@@ -93,15 +98,29 @@ def repo_browse(request, user_name, repo_name, path=None):
     except KeyError:
         pass
 
-    if not (can_see or can_edit):
-        return HttpResponse('Not authorized', status=401)
+    try:
+        q = request.GET['q']
+        qtype = request.GET['qt']
+    except KeyError:
+            pass
+
+    messages = {
+        'grep'  : 'Log Message',
+        'author': 'Author',
+        'committer' : 'Committer',
+        'range' : 'Range'
+    }
+    search_text = messages['grep']
+    if qtype in messages:
+        search_text = messages[qtype]
 
     query = request.GET.urlencode()
     url = cgit_url(user_name, repo_name, path, query)
     text = get(url)
 
     context = get_context(request, {'owner': owner, 'repo_html':text.text, 'repo':repo,
-        'can_see': can_see, 'can_edit':can_edit, 'id':commit_id, 'method':method})
+        'can_see': can_see, 'can_edit':can_edit, 'id':commit_id, 'method':method,
+        'q':q, 'qtype':qtype, 'search_text':search_text})
     return render_to_response('viewer/repo_view.html', context)
 
 
