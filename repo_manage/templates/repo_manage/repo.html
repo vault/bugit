@@ -1,58 +1,16 @@
-{% extends "base.html" %}
-
+{% extends "repo_manage/repo_nav.html" %}
 {% load markup %}
 
 {% block title %}Viewing {{ repo.name }} {% endblock %}
 
-{% block content %}
-<h1>{{ repo.name }} &mdash; {{ repo.description }}</h1>
-<h3>by <a href="{% url repo_list owner.username %}">{{ owner.get_full_name }}</a></h3>
-{% if can_see or can_edit %}
-<h3>Clone this repository</h3>
-{% if can_edit %}
-<pre>git clone {{ repo.get_clone_url }}</pre>
-<h3>Or push an existing repository</h3>
-<pre>git remote add origin {{ repo.get_clone_url }}
-git push origin master</pre>
-{% else %}
-<pre>git clone {{ repo.get_public_clone_url }}</pre>
-{% endif %}
-{% endif %}
-<p>{{ repo.long_description|markdown:"safe" }}</p>
-{% if owners %}
-<h2>Who has what access to this repository</h2>
-<h3>The owners of the repository</h3>
-    <ul>
-    {% for c in owners %}
-        <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-{% if writers %}
-<h3>People with write access</h3>
-    <ul>
-    {% for c in writers %}
-        <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-{% if readers %}
-<h3>People with read-only access</h3>
-    <ul>
-    {% for c in readers %}
-        <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-<div class="row">
-{% if can_see %}
-    <a class="span" href="{% url repo_browse owner.username repo.name %}"><button class="btn btn-primary" type="submit"><i class="icon-eye-open icon-white"></i> View</button></a>
-{% endif %}
-{% if can_edit %}
-    <a class="span" href="{% url repo_edit owner.username repo.name %}"><button class="btn" type="submit"><i class="icon-edit"></i> Edit</button></a>
-    <!--<form class="span" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-danger" type="submit"><i class="icon-remove icon-white"></i> Delete</button></form>-->
-{% endif %}
-<a class="span" href="{% url repo_list owner.username %}"><button class="btn"><i class="icon-arrow-left"></i> Back to list</button></a>
+
+{%block repo_desc %}active{%endblock%}
+
+{% block inner_content %}
+
+<div id="repo_description">
+    {{ repo.long_description|markdown:"safe" }}
 </div>
+
 
 {% endblock %}

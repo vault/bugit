@@ -1,8 +1,9 @@
-{% extends "base.html" %}
+{% extends "repo_manage/repo_nav.html" %}
 
-{% block title %}Editing a Repo{% endblock %}
+{% block title %}Editing {{ repo.name }}{% endblock %}
 
-{% block content %}
+{% block repo_settings %}active{%endblock%}
+{% block inner_content %}
 
 {% if new_form %}
 <h1>New Repo</h1>
@@ -86,8 +87,7 @@
     {% endif %}
 
     <div class="row">
-    <button class="span btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
-    <a class="span" href="{% url repo_view owner.username repo.name %}"><button class="btn"><i class="icon-arrow-left"></i> Back</button></a>
+        <button class="span btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
     </div>
 </form>
 

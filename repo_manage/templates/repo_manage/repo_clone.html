@@ -1,0 +1,19 @@
+{% extends "repo_manage/repo_nav.html" %}
+{% block title %}Viewing {{ repo.name }} {% endblock %}
+{%block repo_clone %}active{%endblock%}
+
+{% block inner_content %}
+    <div id="repo_clone">
+        {% if can_see or can_edit %}
+            <h3>Clone this repository</h3>
+        {% if can_edit %}
+            <pre>git clone {{ repo.get_clone_url }}</pre>
+            <h3>Or push an existing repository</h3>
+            <pre>git remote add origin {{ repo.get_clone_url }}
+git push origin master</pre>
+        {% else %}
+            <pre>git clone {{ repo.get_public_clone_url }}</pre>
+        {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

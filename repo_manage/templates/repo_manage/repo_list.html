@@ -17,7 +17,7 @@
     <ul>
         {% for repo in owned %}
         <li>
-        <a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.name }}</a> &mdash; {{ repo.description }}
+        <a href="{% url repo_desc repo.owner.username repo.name %}">{{ repo.name }}</a> &mdash; {{ repo.description }}
         </li>
         {% endfor %}
     </ul>
@@ -40,7 +40,7 @@
 {% endifnotequal %}
 <ul>
     {% for repo in write %}
-    <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
+    <li><a href="{% url repo_desc repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
     &mdash; {{ repo.description }}</li>
     </li>
     {% endfor %}
@@ -51,7 +51,7 @@
 <h3>Repos you can read from</h3>
 <ul>
     {% for repo in read %}
-    <li><a href="{% url repo_view repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
+    <li><a href="{% url repo_desc repo.owner.username repo.name %}">{{ repo.owner.username }}/{{ repo.name }}</a>
     &mdash; {{ repo.description }}</li>
     </li>
     {% endfor %}

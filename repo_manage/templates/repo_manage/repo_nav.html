@@ -1,0 +1,26 @@
+
+{% extends "base.html" %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <a href="#" class="brand">{{ repo.name }}</a>
+        <ul class="nav">
+            <li class="{% block repo_desc %}{% endblock %}"><a href="{% url repo_desc owner.username repo.name %}">Description</a></li>
+            <li class="{% block repo_browse %}{% endblock %}"><a href="{% url repo_browse owner.username repo.name %}">View</a></li>
+            <li class="{% block repo_clone %}{% endblock %}"><a href="{% url repo_clone owner.username repo.name %}">Clone</a></li>
+            <li class="{% block repo_access %}{% endblock %}"><a href="{% url repo_access owner.username repo.name %}">People</a></li>
+
+            {% if can_edit %}
+                <li class="{% block repo_settings %}{% endblock %}"><a href="{% url repo_edit owner.username repo.name %}">Settings</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+</div>
+{% block inner_content %}{% endblock %}
+{% endblock %}
+

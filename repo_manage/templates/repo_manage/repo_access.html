@@ -1,0 +1,34 @@
+{% extends "repo_manage/repo_nav.html" %}
+{% block title %}Viewing {{ repo.name }} {% endblock %}
+
+{%block repo_access %}active{%endblock%}
+
+{% block inner_content %}
+<div id="repo_access">
+    {% if owners %}
+    <h2>Who has what access to this repository</h2>
+    <h3>The owners of the repository</h3>
+        <ul>
+        {% for c in owners %}
+            <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if writers %}
+    <h3>People with write access</h3>
+        <ul>
+        {% for c in writers %}
+            <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if readers %}
+    <h3>People with read-only access</h3>
+        <ul>
+        {% for c in readers %}
+            <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
