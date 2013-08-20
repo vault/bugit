@@ -19,7 +19,39 @@ def index(request):
     return redirect("repo_list", user.username)
 
 
-def repo_view(request, user_name, repo_name):
+def repo_desc(request, user_name, repo_name):
+    user = request.user
+    owner = get_object_or_404(User, username=user_name)
+    repo = get_object_or_404(Repository, owner=owner, name=repo_name)
+
+    can_see = user in repo.collaborators.all()
+    can_edit = user in repo.owners()
+
+    if not can_see:
+        return HttpResponse('Not authorized', status=401)
+
+    context = get_context(request,
+            {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit})
+    return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
+
+
+def repo_clone(request, user_name, repo_name):
+    user = request.user
+    owner = get_object_or_404(User, username=user_name)
+    repo = get_object_or_404(Repository, owner=owner, name=repo_name)
+
+    can_see = user in repo.collaborators.all()
+    can_edit = user in repo.owners()
+
+    if not can_see:
+        return HttpResponse('Not authorized', status=401)
+
+    context = get_context(request,
+            {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit})
+    return render_to_response('repo_manage/repo_clone.html', context, context_instance=RequestContext(request))
+
+
+def repo_access(request, user_name, repo_name):
     user = request.user
     owner = get_object_or_404(User, username=user_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
@@ -37,7 +69,7 @@ def repo_view(request, user_name, repo_name):
     context = get_context(request,
             {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit,
                 'owners': owners, 'writers':writers, 'readers':readers })
-    return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
+    return render_to_response('repo_manage/repo_access.html', context, context_instance=RequestContext(request))
 
 
 def repo_list(request, user_name):
@@ -99,9 +131,9 @@ def repo_new(request):
             try:
                 repo.save()
                 repo.collaboration_set.add(Collaboration(user=user, permission='O'))
-                return redirect('repo_view' , user.username, repo.name)
+                return redirect('repo_desc' , user.username, repo.name)
             except IntegrityError:
-                new_form._errors["repo_name"] = ErrorList(["You ABABAB already have a repository named that"])
+                new_form._errors["repo_name"] = ErrorList(["You already have a repository named that"])
     context = get_context(request, { 'new_form':new_form, 'form':form})
     return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))
 
@@ -113,7 +145,10 @@ def repo_edit(request, user_name, repo_name):
 
     owners = repo.owners()
 
-    if user not in owners:
+    can_see = user in repo.collaborators.all()
+    can_edit = user in owners
+
+    if not can_edit:
         return HttpResponse("You can't edit this", status=401)
 
     if request.method == 'GET':
@@ -126,9 +161,10 @@ def repo_edit(request, user_name, repo_name):
         if form.is_valid() and colab_form.is_valid():
             repo = form.save()
             colab_form.save()
-            return redirect('repo_view', owner.username, repo.name)
+            return redirect('repo_desc', owner.username, repo.name)
 
-    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, 'colab': colab_form})
+    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, 'colab': colab_form,
+        'can_edit':can_edit, 'can_see':can_see})
     return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))
 
 
