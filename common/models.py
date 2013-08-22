@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.contrib import admin
+from django.contrib.admin.sites import AlreadyRegistered
 import base64, hashlib
 
 from django.conf import settings
-from common.signals import dispatch_repo_work
+from .signals import dispatch_repo_work
 from validators import validate_key_format, validate_key_decode
 
 
@@ -123,8 +124,11 @@ class RepoAdmin(admin.ModelAdmin):
     inlines = (CollaborationInline,)
 
 
-admin.site.register(PublicKey)
-admin.site.register(Repository, RepoAdmin)
+try:
+    admin.site.register(PublicKey)
+    admin.site.register(Repository, RepoAdmin)
+except AlreadyRegistered:
+    pass
 
 post_save.connect(dispatch_repo_work,
         sender=PublicKey, dispatch_uid="pubkey_save_dispatcher")

@@ -1,24 +1,80 @@
 
-import os, sys
+import os, sys, pwd, grp, syslog, signal
 
-this = os.path.dirname(os.path.abspath(__file__))
-up1 = os.path.join(this, '..')
-up2 = os.path.join(this, '..', '..')
-
-paths = [up1, up2]
-
-for path in paths:
-    if path not in sys.path:
-        sys.path.append(path)
+app_path = open('/etc/bugit/settings').read().strip()
+sys.path.append(app_path)
+sys.path.append(app_path + '/bugit')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
 
 from gitolite import GitoliteUserConf, RepositoryConf
-from common.models import User
 
-from common.redis_client import redis_db, CommandQueue
+from bugit.common.models import User
+from bugit import settings
+
+from bugit.common.redis_client import redis_db, CommandQueue
 
 from subprocess import call
+
+def log(message, level=syslog.LOG_INFO):
+    syslog.syslog(level, message)
+
+
+def drop_permissions(username='nobody', groupname='nogroup'):
+    if os.getuid() != 0:
+        return
+
+    uid = pwd.getpwnam(username).pw_uid
+    gid = grp.getgrnam(groupname).gr_gid
+
+    os.setgroups([])
+    os.setgid(gid)
+    os.setuid(uid)
+    os.umask(077)
+
+
+def daemonize():
+    if os.fork() == 0:
+        # child process
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)
+        pid = os.fork()
+
+        if pid != 0:
+            os._exit(0)
+        else:
+            write_pid_file()
+    else:
+        os._exit(0)
+
+
+def write_pid_file():
+    os.umask(077)
+    pid = os.getpid()
+    exists = True
+    pidpath = '/var/run/git-worker.pid'
+    try:
+        pidfile = open(pidpath, 'r')
+        pidfile.close()
+    except IOError as error:
+        if error.errno == 13:
+            log("Can't write PID file, exiting", syslog.LOG_ERR)
+            sys.exit(1)
+        elif error.errno == 2:
+            exists = False
+
+    if exists:
+        log("PID file already exists. We may not have shut down properly. Overwriting.",
+                syslog.LOG_ERR)
+
+    try:
+        pidfile = open(pidpath, 'w')
+        pidfile.write(str(pid))
+        pidfile.close()
+    except IOError as error:
+        if error.errno == 13:
+            log("Can't write PID file, exiting", syslog.LOG_ERR)
+        sys.exit(1)
+
 
 
 def next_user(r):
@@ -53,7 +109,7 @@ def config_key(config, key):
 
 
 def process_user(r, user_name):
-    print "Procesing", user_name
+    log("Procesing user '%s'"% user_name)
     user = User.objects.get(username=user_name)
 
     config = GitoliteUserConf(user.username)
@@ -72,21 +128,31 @@ def process_user(r, user_name):
 
 if __name__ == '__main__':
 
+    null = open("/dev/null", 'w')
+    sys.stdout = null
 
-    print "Getting redis..."
+    daemonize()
+    drop_permissions(settings.WORKER_USER, settings.WORKER_GROUP)
+    syslog.openlog('git-worker')
+    log(settings.WORKER_USER +  settings.WORKER_GROUP)
+
+    log("Connecting to redis")
     r = redis_db()
 
-    print "CD-ing..."
-    os.chdir("/srv/bugit/gitolite-admin")
+    log("Changing to gitolite-admin directory")
+    home = pwd.getpwnam(settings.WORKER_USER)[5]
+    log(home)
+    admin = os.path.join(home, 'gitolite-admin')
+    os.chdir(admin)
 
-    print "Updating local config..."
+    log("Updating gitolite-admin config...")
     call(["git", "pull"])
 
-    print "Processing remnants..."
+    log("Processing pre-existing users")
     for item in r.smembers(CommandQueue.processing):
         process_user(r, item)
 
-    print "Entering main-loop"
+    log("Entering main-loop")
     while True:
         user_name = next_user(r)
         call(["git", "pull"])
