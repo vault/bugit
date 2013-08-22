@@ -4,6 +4,7 @@ from django.db.models.signals import post_save, post_delete
 from django.contrib import admin
 import base64, hashlib
 
+from django.conf import settings
 from common.signals import dispatch_repo_work
 from validators import validate_key_format, validate_key_decode
 
@@ -51,10 +52,20 @@ class Repository(models.Model):
         return "%s/%s" %(self.owner.username, self.name)
 
     def get_clone_url(self):
-        return "git@eng-git.bu.edu:%s/%s" % (self.owner.username, self.name)
+        return "%s:%s/%s" % (self._ssh_url(), self.owner.username, self.name)
+
 
     def get_public_clone_url(self):
-        return "git://eng-git.bu.edu/%s/%s" % (self.owner.username, self.name)
+        return "%s/%s/%s" % (self._pub_url(), self.owner.username, self.name)
+
+
+    def _pub_url(self):
+        return 'git://%s' % settings.GIT_HOST
+
+
+    def _ssh_url(self):
+        return '%s@%s' % (settings.GIT_USER, settings.GIT_HOST)
+
 
     def owners(self):
         return self.collaborators.filter(collaboration__permission='O')
