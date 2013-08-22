@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 
 from subprocess import Popen, PIPE, call
-import MySQLdb
 import re
 import os
+import sys
 
-DB = {
-   'name':'bugit_testing',
-   'host':'localhost',
-   'user':'bugit_desc',
-   'pass':'81c94361be2668ddb7ec123e739605b4'
-}
+
+app_path = open('/etc/bugit/settings').read().strip()
+sys.path.append(app_path)
+bugit_path = os.path.join(app_path, 'bugit')
+sys.path.append(bugit_path)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
+
+from bugit.common.models import Repository
 
 
 def extract_readme():
@@ -89,16 +91,11 @@ def update_readme(readme_text, readme_format, repo_user, repo_name):
     """
     if repo_user is None or repo_name is None:
         return
-    db = MySQLdb.connect(passwd=DB['pass'], db=DB['name'], user=DB['user'], host=DB['host'])
-    cursor = db.cursor()
-    cursor.execute("SELECT id from auth_user where username = %s;", repo_user)
-    owner_id = cursor.fetchone()[0]
-    print "Owner id is ", owner_id
-    SQL = """
-        UPDATE common_repository SET long_description = %s, description_format = %s
-        WHERE owner_id = %s AND name = %s;
-    """
-    cursor.execute(SQL, (readme_text, readme_format[0], owner_id, repo_name))
+
+    repo = Repository.objects.get(owner__username=repo_user, name=repo_name)
+    repo.long_description = readme_text
+    repo.description_format = readme_format
+    repo.save()
 
 
 if __name__ == '__main__':
