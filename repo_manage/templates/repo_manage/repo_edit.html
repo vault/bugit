@@ -76,7 +76,7 @@
             <tr>
         {% endif %}
         {{ c.id }}
-        <td>{{ c.user }}</td>
+        <td><input type="text" autocomplete="off" name="{{ c.user.html_name }}" {% if c.user.value %}value="{{ c.user.value }}"{%endif%} id="id_{{c.user.html_name}}" class="user-complete" /></td>
         <td>{{ c.permission }}</td>
         <td>{{ c.DELETE }}</td>
         </tr>
@@ -94,4 +94,24 @@
 {% if not new_form %}
 <form class="form-inline" method="post" action="{% url repo_delete owner.username repo.name %}">{% csrf_token %}<button class="btn btn-link" type="submit">Delete</button></form>
 {% endif %}
+
+
 {% endblock %}
+
+{% block end %}
+<script>
+$(".user-complete").typeahead({
+    source: function(query, process) {
+        $.ajax({
+            type:"GET",
+            url:'{% url user_complete %}',
+            data:{query:query}
+        }).done(function(users) {
+            process(users);
+        });
+    },
+    minLength: 2
+});
+</script>
+{% endblock %}
+
