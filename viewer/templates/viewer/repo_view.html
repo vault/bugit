@@ -5,8 +5,15 @@
 {% block head %}<link rel="stylesheet" media="screen" href="/static/css/cgit.css" /> {% endblock %}
 {% block style %}
 <style>
-.tabs {display:none;}
+div#cgit div.content {padding: 0;}
+div#cgit .tabs, div#cgit .path {display:none;}
 div#cgit div.content {border-bottom: 0;}
+div#cgit table.blob {border-top: 0; padding: 0; width:100%;}
+div#cgit table.blob td.linenumbers { border-right: 0; padding: 0; }
+div#cgit table.blob td.lines {  padding: 0; padding-left: .1em;}
+div#cgit table.blob td.linenumbers pre {font-size: 12px; word-break:normal;}
+div#cgit table.blob td.lines pre {font-size: 12px;}
+div#cgit table.blob pre {padding: .5em;}
 </style>
 {% endblock %}
 {% block repo_browse %}active{%endblock%}
@@ -14,8 +21,7 @@ div#cgit div.content {border-bottom: 0;}
 
 {% block inner_content %}
 
-<div class="">
-    <div class="">
+<div id='cgit-nav'>
         <ul class="nav nav-tabs">
             <li class="{% ifequal method "summary" %}active{%endifequal%}">
             <a href="{% url repo_browse owner.username repo.name %}">Summary</a>
@@ -74,10 +80,27 @@ div#cgit div.content {border-bottom: 0;}
             </div>
         </form>
         </ul>
-    </div>
 </div>
+
+{% if file_path %}
+<div id='file-path'>
+    <ul class='breadcrumb'>
+        <li><a href="{% url repo_browse owner.username repo.name %}tree">Root</a></li>
+        {% for f in file_path|slice:":-1" %}
+        {% with name=f.0 path=f.1 %}
+        <li><span class="divider">/</span><a href="{% url repo_browse owner.username repo.name %}tree/{{path}}">{{name}}</a></li>
+        {% endwith %}
+        {% endfor %}
+        {% with final=file_path|last %}
+        <li class="active"><span class="divider">/</span>{{ final.0 }}</li>
+        {% endwith %}
+    </ul>
+</div>
+{% endif %}
 {% autoescape off %}
     {{ repo_html }}
 {% endautoescape %}
+
+{% block end %}<script>$('.pager').insertAfter('#cgit');</script>{% endblock %}
 
 {% endblock %}
