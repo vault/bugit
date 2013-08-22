@@ -1,23 +1,22 @@
 
 import os, sys, pwd, grp, syslog, signal
+import optparse
 
-app_path = open('/etc/bugit/settings').read().strip()
-sys.path.append(app_path)
-sys.path.append(app_path + '/bugit')
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
-
-from gitolite import GitoliteUserConf, RepositoryConf
+from .gitolite import GitoliteUserConf, RepositoryConf
 
 from bugit.common.models import User
 from bugit import settings
-
 from bugit.common.redis_client import redis_db, CommandQueue
 
 from subprocess import call
 
+DEBUG = False
+
 def log(message, level=syslog.LOG_INFO):
-    syslog.syslog(level, message)
+    if not DEBUG:
+        syslog.syslog(level, message)
+    else:
+        print message
 
 
 def drop_permissions(username='nobody', groupname='nogroup'):
@@ -126,24 +125,33 @@ def process_user(r, user_name):
     r.srem(CommandQueue.processing, user_name)
 
 
-if __name__ == '__main__':
+def main():
+    parser = optparse.OptionParser(description='Run gitolite config daemon')
+    parser.add_option("-d", "--debug", action="store_true", dest="debug", help="Don't daemonize, log to stdout")
+    (options, args) = parser.parse_args()
+    DEBUG = options.debug
 
-    null = open("/dev/null", 'w')
-    sys.stdout = null
+    if not DEBUG:
+        null = open("/dev/null", 'w')
+        sys.stdout = null
+        sys.stderr = null
 
-    daemonize()
-    drop_permissions(settings.WORKER_USER, settings.WORKER_GROUP)
+    if not DEBUG:
+        daemonize()
+        drop_permissions(settings.WORKER_USER, settings.WORKER_GROUP)
+
     syslog.openlog('git-worker')
     log(settings.WORKER_USER +  settings.WORKER_GROUP)
 
     log("Connecting to redis")
     r = redis_db()
 
-    log("Changing to gitolite-admin directory")
-    home = pwd.getpwnam(settings.WORKER_USER)[5]
-    log(home)
-    admin = os.path.join(home, 'gitolite-admin')
-    os.chdir(admin)
+    if not DEBUG:
+        log("Changing to gitolite-admin directory")
+        home = pwd.getpwnam(settings.WORKER_USER)[5]
+        log(home)
+        admin = os.path.join(home, 'gitolite-admin')
+        os.chdir(admin)
 
     log("Updating gitolite-admin config...")
     call(["git", "pull"])
@@ -159,3 +167,7 @@ if __name__ == '__main__':
         process_user(r, user_name)
         call(["git", "push"])
         
+
+if __name__ == '__main__':
+    main()
+
