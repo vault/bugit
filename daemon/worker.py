@@ -8,9 +8,16 @@ from bugit.common.models import User
 from bugit import settings
 from bugit.common.redis_client import redis_db, CommandQueue
 
-from subprocess import call
+import subprocess
 
 DEBUG = False
+
+def call(args):
+    f = open('/dev/null', 'w')
+    if DEBUG:
+        return subprocess.call(args)
+    else:
+        return subprocess.call(args, stdout=f, stderr=f)
 
 def log(message, level=syslog.LOG_INFO):
     if not DEBUG:
