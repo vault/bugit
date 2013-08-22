@@ -12,7 +12,7 @@
 
 name="git-worker.py"
 exec="/usr/bin/$name"
-pidfild='/var/run/git-worker.py'
+pidfile='/var/run/git-worker.pid'
 config='/etc/bugit/settings'
 
 start() {
@@ -42,7 +42,7 @@ reload() {
     false
 }
 
-rh_staus() {
+rh_status() {
     status -p $pidfile $name
 }
 
@@ -52,18 +52,23 @@ rh_status_q() {
 
 case "$1" in
     start)
-        w_status_q && exit 0
+        rh_status_q && exit 0
         $1
         ;;
     stop)
+        rh_status_q || exit 0
+        $1
         ;;
     restart)
-        ;;
-    reload)
+        rh_status_q && exit 7
+        $1
         ;;
     status)
+        rh_status
         ;;
     condrestart|try-restart)
+        rh_status_q || exit 0
+        restart
         ;;
     *)
         echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart}"
