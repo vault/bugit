@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib import admin
 
 from django.db.models.signals import pre_save
 
@@ -17,7 +16,6 @@ class Message(models.Model):
     def __unicode__(self):
         return '"{0}" from {1}'.format(self.subject, self.sender.username)
 
-admin.site.register(Message)
 
 pre_save.connect(mail_staff, sender=Message, dispatch_uid="message_send_dispatcher")
 
