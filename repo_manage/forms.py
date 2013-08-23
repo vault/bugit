@@ -16,7 +16,7 @@ class NewRepositoryForm(forms.Form):
 class RepositoryForm(ModelForm):
     class Meta:
         model = Repository
-        fields = ['description', 'long_description', 'is_public']
+        fields = ['description', 'is_public']
 
 
 class CollaborationForm(ModelForm):

@@ -8,6 +8,21 @@
 <h1>Edit You Public Key</h1>
 {% else %}
 <h1>Add New Public Key</h1>
+<div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h4>Quick Tip!</h4>
+    <p>Your public keys are what control your access to your repositories.</p>
+    <p>You can create a key by running <code>ssh-keygen</code> from the computer
+    you plan on using git from. Enter a secure password when prompted. This will
+    create a pair of files called  <code>id_rsa</code> and <code>id_rsa.pub</code>
+    in <code>~/.ssh</code>. Copy the contents of <code>id_rsa.pub</code> into the
+    Pubkey field below. The description should describe the computer or set of
+    computers you plan on using this key from.</p>
+
+    <p>After adding a new key, you should verify that the fingerprint shown matches
+    the actual fingerprint for your key to make sure it was copied correctly.</p>
+</div>
+
 {% endif %}
 {% if pk %}
     <form action="{% url pubkey_edit pk.id %}" method="post">
