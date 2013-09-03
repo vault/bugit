@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
+from django.core.exceptions import ObjectDoesNotExist
 import base64, hashlib
 
 from django.conf import settings
@@ -76,6 +77,15 @@ class Repository(models.Model):
 
     def writers(self):
         return self.collaborators.filter(collaboration__permission='W')
+
+    def user_access(self, user):
+        try:
+            return self.collaboration_set.get(user=user).permission
+        except ObjectDoesNotExist:
+            if self.is_public:
+                return 'R'
+            else:
+                None
 
 
 class Collaboration(models.Model):

@@ -14,9 +14,9 @@
             <li class="{% block repo_clone %}{% endblock %}"><a href="{% url repo_clone owner.username repo.name %}">Clone</a></li>
             <li class="{% block repo_access %}{% endblock %}"><a href="{% url repo_access owner.username repo.name %}">People</a></li>
 
-            {% if can_edit %}
+            {% ifequal access "O" %}
                 <li class="{% block repo_settings %}{% endblock %}"><a href="{% url repo_edit owner.username repo.name %}">Settings</a></li>
-            {% endif %}
+            {% endifequal %}
         </ul>
     </div>
 

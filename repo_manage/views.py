@@ -24,14 +24,13 @@ def repo_desc(request, user_name, repo_name):
     owner = get_object_or_404(User, username=user_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
 
-    can_see = user in repo.collaborators.all()
-    can_edit = user in repo.owners()
+    access = repo.user_access(user)
 
-    if not can_see:
+    if access is None:
         return HttpResponse('Not authorized', status=401)
 
     context = get_context(request,
-            {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit})
+            {'repo' : repo, 'access': access, 'owner':owner})
     return render_to_response('repo_manage/repo.html', context, context_instance=RequestContext(request))
 
 
@@ -40,14 +39,13 @@ def repo_clone(request, user_name, repo_name):
     owner = get_object_or_404(User, username=user_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
 
-    can_see = user in repo.collaborators.all()
-    can_edit = user in repo.owners()
+    access = repo.user_access(user)
 
-    if not can_see:
+    if access is None:
         return HttpResponse('Not authorized', status=401)
 
     context = get_context(request,
-            {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit})
+            {'repo' : repo, 'access':access, 'owner':owner})
     return render_to_response('repo_manage/repo_clone.html', context, context_instance=RequestContext(request))
 
 
@@ -60,16 +58,16 @@ def repo_access(request, user_name, repo_name):
     writers = repo.writers()
     readers = repo.readers()
 
-    can_see = user in repo.collaborators.all()
-    can_edit = user in owners
+    access = repo.user_access(user)
 
-    if not can_see:
+    if access is None:
         return HttpResponse('Not authorized', status=401)
 
     context = get_context(request,
-            {'repo' : repo, 'owner' : owner,'can_see':can_see, 'can_edit': can_edit,
-                'owners': owners, 'writers':writers, 'readers':readers })
-    return render_to_response('repo_manage/repo_access.html', context, context_instance=RequestContext(request))
+            {'repo' : repo, 'access': access, 'owners': owners,
+                'writers':writers, 'readers':readers, 'owner':owner })
+    return render_to_response('repo_manage/repo_access.html', context,
+            context_instance=RequestContext(request))
 
 
 def repo_list(request, user_name):
@@ -143,12 +141,10 @@ def repo_edit(request, user_name, repo_name):
     user = request.user
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
 
-    owners = repo.owners()
 
-    can_see = user in repo.collaborators.all()
-    can_edit = user in owners
+    access = repo.user_access(user)
 
-    if not can_edit:
+    if access != 'O':
         return HttpResponse("You can't edit this", status=401)
 
     if request.method == 'GET':
@@ -163,8 +159,8 @@ def repo_edit(request, user_name, repo_name):
             colab_form.save()
             return redirect('repo_desc', owner.username, repo.name)
 
-    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form, 'colab': colab_form,
-        'can_edit':can_edit, 'can_see':can_see})
+    context = get_context(request, {'owner': owner, 'repo' : repo, 'form' : form,
+        'colab': colab_form, 'access': access })
     return render_to_response('repo_manage/repo_edit.html', context, context_instance=RequestContext(request))
 
 
@@ -173,7 +169,9 @@ def repo_delete(request, user_name, repo_name):
     owner = get_object_or_404(User, username=user_name)
     repo = get_object_or_404(Repository, owner=owner, name=repo_name)
 
-    if user not in repo.owners():
+    access = repo.user_access(user)
+
+    if access != 'O':
         return HttpResponse("You can't delete this", status=401)
 
     if request.method == 'POST':
@@ -181,6 +179,5 @@ def repo_delete(request, user_name, repo_name):
         return redirect('repo_list', user.username)
     else:
         return HttpResponse("You can't do that", status=405)
-
 
 
