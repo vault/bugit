@@ -25,4 +25,4 @@ class UserForm(ModelForm):
 class ProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['email_on_update']
+        fields = ['never_email']

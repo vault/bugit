@@ -107,7 +107,7 @@ class Collaboration(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    email_on_update = models.BooleanField()
+    never_email = models.BooleanField()
     
 # Methods for getting repos
 #
