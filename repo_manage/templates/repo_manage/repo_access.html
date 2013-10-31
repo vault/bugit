@@ -10,7 +10,11 @@
     <h3>The owners of the repository</h3>
         <ul>
         {% for c in owners %}
+        {% if c.get_full_name %}
             <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% else %}
+            <li><a href="{% url repo_list c.username %}">{{ c.username }}</a></li>
+        {% endif %}
         {% endfor %}
         </ul>
     {% endif %}
@@ -18,7 +22,11 @@
     <h3>People with write access</h3>
         <ul>
         {% for c in writers %}
+        {% if c.get_full_name %}
             <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% else %}
+            <li><a href="{% url repo_list c.username %}">{{ c.username }}</a></li>
+        {% endif %}
         {% endfor %}
         </ul>
     {% endif %}
@@ -26,7 +34,11 @@
     <h3>People with read-only access</h3>
         <ul>
         {% for c in readers %}
+        {% if c.get_full_name %}
             <li><a href="{% url repo_list c.username %}">{{ c.get_full_name }}</a></li>
+        {% else %}
+            <li><a href="{% url repo_list c.username %}">{{ c.username }}</a></li>
+        {% endif %}
         {% endfor %}
         </ul>
     {% endif %}
