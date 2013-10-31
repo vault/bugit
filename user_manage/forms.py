@@ -2,7 +2,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from common.models import User, PublicKey
+from common.models import User, PublicKey, UserProfile
 
 slug_errors = {
         'invalid' : "Use only letters, numbers, underscores, and hyphens",
@@ -21,3 +21,8 @@ class UserForm(ModelForm):
         model = User
         fields = ['first_name', 'last_name']
 
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['email_on_update']

@@ -106,7 +106,7 @@ class Collaboration(models.Model):
         return "{0} access for {1} on {2}".format(self.permission, self.user, self.repository)
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     email_on_update = models.BooleanField()
     
 # Methods for getting repos
@@ -144,6 +144,7 @@ try:
     admin.site.register(Repository, RepoAdmin)
 except AlreadyRegistered:
     pass
+
 
 post_save.connect(dispatch_repo_work,
         sender=PublicKey, dispatch_uid="pubkey_save_dispatcher")

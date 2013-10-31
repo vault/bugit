@@ -11,6 +11,13 @@
     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Update</button>
 </form>
 
+<h2>Other settings</h2>
+<form class="form form-inline" action="{% url user_profile %}" method="post">
+    {% csrf_token %}
+    {{ profile_form.as_p }}
+    <button class="btn" type="submit">Save</button>
+</form>
+
 <h2>Public Keys</h2>
 {% if keys %}
     <table class="table table-striped">
