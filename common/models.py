@@ -46,6 +46,7 @@ class Repository(models.Model):
     is_public = models.BooleanField()
     is_created = models.BooleanField()
     collaborators = models.ManyToManyField(User, through='Collaboration', related_name='collaborator_set', blank=True)
+    email_on_update = models.BooleanField()
 
     class Meta:
         unique_together = ("owner", "name")
@@ -103,6 +104,10 @@ class Collaboration(models.Model):
 
     def __unicode__(self):
         return "{0} access for {1} on {2}".format(self.permission, self.user, self.repository)
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User)
+    email_on_update = models.BooleanField()
     
 # Methods for getting repos
 #
