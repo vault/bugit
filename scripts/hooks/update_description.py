@@ -11,6 +11,7 @@ sys.path.append(app_path)
 bugit_path = os.path.join(app_path, 'bugit')
 sys.path.append(bugit_path)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bugit.settings'
+git_notify = os.path.join(bugit_path, 'lib', "git-notifier", 'git-notifier')
 
 from bugit.common.models import Repository
 
@@ -98,6 +99,23 @@ def update_readme(readme_text, readme_format, repo_user, repo_name):
     repo.save()
 
 
+def email_collaborators(repo_user, repo_name):
+    repo = Repository.objects.get(owner__username=repo_user, name=repo_name)
+    if repo.email_on_update:
+        to_email = repo.collaborators.exclude(userprofile__never_email=True)
+        sender = os.environ['GL_USER'].split("-")[0]
+        sender = "%s@bu.edu"%sender
+        commit = 'https://eng-git.bu.edu/view/%s/%s/commit?id='%(repo_user, repo_name)
+        url = 'https://eng-git.bu.edu/repo/%s/%s/' % (repo_user, repo_name)
+        prefix = '[eng-git] [%s/%s]'% (repo_user, repo_name)
+        l = ",".join([user.email for user in to_email])
+
+        notify_cmd = [git_notify, "--emailprefix=%s"%prefix, "--hostname=eng-git.bu.edu", 
+                "--mailinglist=%s"%l, "--repouri=%s"%url, "--sender=%s"%sender,
+                '--link='+commit+'%s' ]
+        call(notify_cmd)
+
+
 if __name__ == '__main__':
     try:
         (text, fmt)  = extract_readme()
@@ -105,6 +123,7 @@ if __name__ == '__main__':
         text = clean_readme(text)
         fmt = readme_format(fmt)
         update_readme(text, fmt, user, name)
+        email_collaborators(user, name)
     except Exception, e:
         print "There was a problem: ", e
 
