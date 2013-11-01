@@ -6,6 +6,7 @@
 {% block content %}
 
 <div class="navbar">
+{% if repo %}
     <div class="navbar-inner">
         <a href="#" class="brand">{{ repo.name }}</a>
         <ul class="nav">
@@ -21,6 +22,7 @@
     </div>
 
 </div>
+{% endif %}
 {% block inner_content %}{% endblock %}
 {% endblock %}
 
